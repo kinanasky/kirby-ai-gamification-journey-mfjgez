@@ -2,20 +2,26 @@
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
-  primary: '#FF69B4',      // Pink like Kirby
-  secondary: '#87CEEB',    // Sky blue
+  primary: '#FFB6C1',      // Light pink like Kirby
+  secondary: '#E6E6FA',    // Lavender
   accent: '#FFD700',       // Gold for stars
-  background: '#E6F3FF',   // Light blue background
-  backgroundAlt: '#F0F8FF', // Alice blue
-  text: '#2F4F4F',         // Dark slate gray
-  grey: '#B0C4DE',         // Light steel blue
+  background: '#F0F8FF',   // Alice blue - very soft
+  backgroundAlt: '#FFF0F5', // Lavender blush
+  text: '#4B0082',         // Indigo - softer than black
+  grey: '#D3D3D3',         // Light gray
   card: '#FFFFFF',         // White cards
-  green: '#90EE90',        // Light green
+  green: '#98FB98',        // Pale green
   red: '#FFB6C1',          // Light pink
   purple: '#DDA0DD',       // Plum
-  orange: '#FFA500',       // Orange
-  yellow: '#FFFF99',       // Light yellow
-  darkText: '#000000',     // Black text for light backgrounds
+  orange: '#FFDAB9',       // Peach puff
+  yellow: '#FFFFE0',       // Light yellow
+  darkText: '#2F2F2F',     // Dark gray instead of black
+  blue: '#B0E0E6',         // Powder blue
+  mint: '#F0FFF0',         // Honeydew
+  coral: '#F0E68C',        // Khaki
+  rose: '#FFE4E1',         // Misty rose
+  sky: '#87CEEB',          // Sky blue
+  cream: '#FFFACD',        // Lemon chiffon
 };
 
 export const buttonStyles = StyleSheet.create({
@@ -31,12 +37,35 @@ export const buttonStyles = StyleSheet.create({
   },
   pixelButton: {
     backgroundColor: colors.primary,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: colors.darkText,
     paddingHorizontal: 20,
     paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 4,
+  },
+  starButton: {
+    backgroundColor: colors.accent,
+    borderWidth: 2,
+    borderColor: colors.darkText,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    margin: 5,
+  },
+  powerUpButton: {
+    backgroundColor: colors.blue,
+    borderWidth: 2,
+    borderColor: colors.darkText,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+    margin: 5,
   },
 });
 
@@ -63,7 +92,7 @@ export const commonStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '800',
     textAlign: 'center',
     color: colors.darkText,
@@ -79,11 +108,11 @@ export const commonStyles = StyleSheet.create({
     textAlign: 'center',
   },
   pixelText: {
-    fontSize: 12,
+    fontSize: 10,
     color: colors.darkText,
     fontFamily: 'PressStart2P_400Regular',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 16,
   },
   section: {
     width: '100%',
@@ -99,12 +128,12 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: colors.card,
     borderColor: colors.darkText,
     borderWidth: 2,
-    borderRadius: 0,
+    borderRadius: 8,
     padding: 15,
     marginVertical: 8,
     width: '100%',
-    boxShadow: '4px 4px 0px rgba(0, 0, 0, 1)',
-    elevation: 4,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+    elevation: 3,
   },
   icon: {
     width: 60,
@@ -118,11 +147,13 @@ export const commonStyles = StyleSheet.create({
   },
   dialogBox: {
     backgroundColor: colors.card,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: colors.darkText,
+    borderRadius: 8,
     padding: 15,
     margin: 10,
-    boxShadow: '4px 4px 0px rgba(0, 0, 0, 1)',
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+    elevation: 3,
   },
   star: {
     width: 30,
@@ -130,5 +161,49 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: colors.accent,
     borderWidth: 2,
     borderColor: colors.darkText,
+    borderRadius: 15,
+  },
+  kirbyCharacter: {
+    width: 100,
+    height: 100,
+    backgroundColor: colors.primary,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: colors.darkText,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  phaseContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+    padding: 15,
+  },
+  phaseTitle: {
+    fontSize: 16,
+    fontFamily: 'PressStart2P_400Regular',
+    color: colors.darkText,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  collectibleGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginVertical: 20,
+  },
+  progressBar: {
+    width: '100%',
+    height: 20,
+    backgroundColor: colors.grey,
+    borderWidth: 2,
+    borderColor: colors.darkText,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: colors.accent,
+    borderRadius: 8,
   },
 });

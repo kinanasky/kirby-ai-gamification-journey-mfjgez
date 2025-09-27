@@ -13,6 +13,7 @@ SplashScreen.preventAutoHideAsync();
 export default function MainScreen() {
   const router = useRouter();
   const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [sparkleAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -25,16 +26,25 @@ export default function MainScreen() {
       Animated.loop(
         Animated.sequence([
           Animated.timing(kirbyAnimation, {
-            toValue: -10,
-            duration: 1000,
+            toValue: -8,
+            duration: 1500,
             useNativeDriver: true,
           }),
           Animated.timing(kirbyAnimation, {
             toValue: 0,
-            duration: 1000,
+            duration: 1500,
             useNativeDriver: true,
           }),
         ])
+      ).start();
+
+      // Start sparkle animation
+      Animated.loop(
+        Animated.timing(sparkleAnimation, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        })
       ).start();
     }
   }, [fontsLoaded]);
@@ -51,95 +61,117 @@ export default function MainScreen() {
   return (
     <SafeAreaView style={commonStyles.container}>
       <ScrollView contentContainerStyle={commonStyles.content}>
+        {/* Sparkles */}
+        <Animated.View 
+          style={[
+            {
+              position: 'absolute',
+              top: 50,
+              left: 50,
+              width: 20,
+              height: 20,
+              backgroundColor: colors.accent,
+              borderRadius: 10,
+              opacity: sparkleAnimation,
+            }
+          ]}
+        />
+        <Animated.View 
+          style={[
+            {
+              position: 'absolute',
+              top: 100,
+              right: 80,
+              width: 15,
+              height: 15,
+              backgroundColor: colors.purple,
+              borderRadius: 8,
+              opacity: sparkleAnimation,
+            }
+          ]}
+        />
+
         {/* Title */}
-        <Text style={[commonStyles.title, { fontSize: 18, marginBottom: 20 }]}>
+        <Text style={[commonStyles.title, { fontSize: 16, marginBottom: 10 }]}>
           Kirby Dream Land
         </Text>
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 30 }]}>
+        <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 30, color: colors.text }]}>
           A Jornada da IA e Gamificação Brasil–Coreia
         </Text>
 
         {/* Kirby Character */}
         <Animated.View 
           style={[
-            {
-              width: 120,
-              height: 120,
-              backgroundColor: colors.primary,
-              borderRadius: 60,
-              borderWidth: 3,
-              borderColor: colors.darkText,
-              marginBottom: 30,
-              alignItems: 'center',
-              justifyContent: 'center',
-            },
+            commonStyles.kirbyCharacter,
             { transform: [{ translateY: kirbyAnimation }] }
           ]}
         >
+          {/* Eyes */}
           <View style={{
-            width: 20,
-            height: 20,
-            backgroundColor: colors.darkText,
-            borderRadius: 10,
-            position: 'absolute',
-            left: 30,
-            top: 35,
-          }} />
-          <View style={{
-            width: 20,
-            height: 20,
-            backgroundColor: colors.darkText,
-            borderRadius: 10,
-            position: 'absolute',
-            right: 30,
-            top: 35,
-          }} />
-          <View style={{
-            width: 15,
-            height: 8,
+            width: 16,
+            height: 16,
             backgroundColor: colors.darkText,
             borderRadius: 8,
             position: 'absolute',
-            bottom: 40,
+            left: 25,
+            top: 30,
+          }} />
+          <View style={{
+            width: 16,
+            height: 16,
+            backgroundColor: colors.darkText,
+            borderRadius: 8,
+            position: 'absolute',
+            right: 25,
+            top: 30,
+          }} />
+          {/* Mouth */}
+          <View style={{
+            width: 12,
+            height: 6,
+            backgroundColor: colors.darkText,
+            borderRadius: 6,
+            position: 'absolute',
+            bottom: 35,
           }} />
           {/* Cheeks */}
           <View style={{
-            width: 15,
-            height: 15,
+            width: 12,
+            height: 12,
             backgroundColor: colors.red,
-            borderRadius: 8,
+            borderRadius: 6,
             position: 'absolute',
-            left: 15,
-            top: 50,
+            left: 12,
+            top: 45,
           }} />
           <View style={{
-            width: 15,
-            height: 15,
+            width: 12,
+            height: 12,
             backgroundColor: colors.red,
-            borderRadius: 8,
+            borderRadius: 6,
             position: 'absolute',
-            right: 15,
-            top: 50,
+            right: 12,
+            top: 45,
           }} />
         </Animated.View>
 
         {/* Dialog Box */}
         <View style={commonStyles.dialogBox}>
-          <Text style={[commonStyles.pixelText, { marginBottom: 15 }]}>
+          <Text style={[commonStyles.pixelText, { marginBottom: 12, fontSize: 9 }]}>
             Olá, aventureiro(a)! Bem-vindo ao mundo da pesquisa sobre Inteligência Artificial e Gamificação na Educação.
           </Text>
-          <Text style={commonStyles.pixelText}>
+          <Text style={[commonStyles.pixelText, { fontSize: 9 }]}>
             Vamos desbloquear juntos o próximo nível?
           </Text>
         </View>
 
         {/* Start Button */}
         <TouchableOpacity
-          style={[buttonStyles.pixelButton, { marginTop: 30, width: '80%' }]}
+          style={[buttonStyles.pixelButton, { marginTop: 30, width: '70%' }]}
           onPress={handleStartAdventure}
         >
-          <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-            Iniciar Aventura
+          <Text style={[commonStyles.pixelText, { color: colors.card, fontSize: 10 }]}>
+            ⭐ Iniciar Aventura ⭐
           </Text>
         </TouchableOpacity>
       </ScrollView>

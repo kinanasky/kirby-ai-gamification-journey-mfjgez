@@ -9,8 +9,7 @@ import { useRouter } from 'expo-router';
 export default function Phase4() {
   const router = useRouter();
   const [battlePhase, setBattlePhase] = useState(0);
-  const [revealedData, setRevealedData] = useState<string[]>([]);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [sakuraAnimation] = useState(new Animated.Value(0));
   const [pokemonAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
@@ -18,25 +17,28 @@ export default function Phase4() {
   });
 
   const battleData = [
-    { id: 'ia', text: 'IA: 52%', color: colors.blue },
-    { id: 'gamification', text: 'Gamificação: 28%', color: colors.purple },
-    { id: 'combined', text: 'IA+Gamificação: 20%', color: colors.accent },
-    { id: 'countries', text: 'Brasil: 52% | Coreia: 48%', color: colors.green },
-    { id: 'methods', text: 'Métodos: 72% Quantitativos, 16% Qualitativos, 12% Mistos', color: colors.coral }
+    { category: 'IA', percentage: 52, color: colors.blue },
+    { category: 'Gamificação', percentage: 28, color: colors.purple },
+    { category: 'IA+Gamificação', percentage: 20, color: colors.accent },
+    { category: 'Brasil', percentage: 52, color: colors.green },
+    { category: 'Coreia', percentage: 48, color: colors.red },
+    { category: 'Quantitativos', percentage: 72, color: colors.orange },
+    { category: 'Qualitativos', percentage: 16, color: colors.mint },
+    { category: 'Mistos', percentage: 12, color: colors.coral }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -6,
-          duration: 1600,
+        Animated.timing(sakuraAnimation, {
+          toValue: -12,
+          duration: 2800,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 1600,
+          duration: 2800,
           useNativeDriver: true,
         }),
       ])
@@ -44,24 +46,16 @@ export default function Phase4() {
 
     // Pokemon battle animation
     Animated.loop(
-      Animated.sequence([
-        Animated.timing(pokemonAnimation, {
-          toValue: 5,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pokemonAnimation, {
-          toValue: -5,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-      ])
+      Animated.timing(pokemonAnimation, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
   const performAttack = () => {
     if (battlePhase < battleData.length) {
-      setRevealedData([...revealedData, battleData[battlePhase].id]);
       setBattlePhase(battlePhase + 1);
       console.log(`Attack performed! Phase: ${battlePhase + 1}`);
     }
@@ -72,7 +66,7 @@ export default function Phase4() {
     router.push('/phase5');
   };
 
-  const isBattleComplete = revealedData.length === battleData.length;
+  const isPhaseComplete = battlePhase >= battleData.length;
 
   if (!fontsLoaded) {
     return null;
@@ -82,94 +76,93 @@ export default function Phase4() {
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
         {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 4 - Arena Pokémon
+        <Text style={[commonStyles.phaseTitle, { color: colors.accent }]}>
+          🌸 Fase 4 - Arena Pokémon 🌸
         </Text>
 
-        {/* Battle Arena */}
-        <View style={{
-          width: '100%',
-          height: 200,
-          backgroundColor: colors.mint,
-          borderWidth: 2,
-          borderColor: colors.darkText,
-          borderRadius: 10,
-          marginBottom: 20,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexDirection: 'row',
-          paddingHorizontal: 20,
-          paddingVertical: 20
-        }}>
-          {/* Gengar (Brasil) */}
+        {/* Arena Environment */}
+        <View style={[commonStyles.card, { backgroundColor: colors.sky, marginBottom: 20, width: '95%' }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 30, textAlign: 'center', marginBottom: 10 }]}>
+            ⚔️ 🏟️ ⚔️
+          </Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 8, textAlign: 'center', color: colors.darkText }]}>
+            Arena de Batalha de Dados
+          </Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 6, textAlign: 'center', color: colors.text, marginTop: 5 }]}>
+            Brasil vs Coreia - Análise Comparativa
+          </Text>
+        </View>
+
+        {/* Pokemon Battle */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginBottom: 20 }}>
+          {/* Brazil Pokemon */}
           <Animated.View 
             style={[
               {
-                width: 80,
-                height: 80,
-                backgroundColor: colors.purple,
-                borderRadius: 40,
-                borderWidth: 2,
-                borderColor: colors.darkText,
                 alignItems: 'center',
-                justifyContent: 'center',
-              },
-              { transform: [{ translateX: pokemonAnimation }] }
+                transform: [
+                  {
+                    scale: pokemonAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.1]
+                    })
+                  }
+                ]
+              }
             ]}
           >
-            <Text style={[commonStyles.pixelText, { fontSize: 20 }]}>👻</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6, marginTop: 5 }]}>Gengar</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Brasil</Text>
+            <Text style={{ fontSize: 40 }}>👻</Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.green }]}>
+              🇧🇷 Gengar Brasil
+            </Text>
           </Animated.View>
 
           {/* VS */}
-          <Text style={[commonStyles.pixelText, { fontSize: 16, color: colors.red }]}>VS</Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 20, color: colors.darkText, alignSelf: 'center' }]}>
+            VS
+          </Text>
 
-          {/* Nidorino (Coreia) */}
+          {/* Korea Pokemon */}
           <Animated.View 
             style={[
               {
-                width: 80,
-                height: 80,
-                backgroundColor: colors.blue,
-                borderRadius: 40,
-                borderWidth: 2,
-                borderColor: colors.darkText,
                 alignItems: 'center',
-                justifyContent: 'center',
-              },
-              { transform: [{ translateX: pokemonAnimation.interpolate({
-                inputRange: [-5, 5],
-                outputRange: [5, -5]
-              }) }] }
+                transform: [
+                  {
+                    scale: pokemonAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1.1, 1]
+                    })
+                  }
+                ]
+              }
             ]}
           >
-            <Text style={[commonStyles.pixelText, { fontSize: 20 }]}>🦏</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6, marginTop: 5 }]}>Nidorino</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Coreia</Text>
+            <Text style={{ fontSize: 40 }}>🦏</Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.red }]}>
+              🇰🇷 Nidorino Coreia
+            </Text>
           </Animated.View>
         </View>
 
-        {/* Kirby Narrator */}
+        {/* Sakura Character */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { 
-              width: 80,
-              height: 80,
-              transform: [{ translateY: kirbyAnimation }] 
-            }
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
           ]}
         >
-          {/* Eyes */}
+          {/* Sakura petals */}
+          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
+          {/* Cute eyes */}
           <View style={{
             width: 12,
             height: 12,
             backgroundColor: colors.darkText,
             borderRadius: 6,
             position: 'absolute',
-            left: 18,
-            top: 22,
+            left: 32,
+            top: 38,
           }} />
           <View style={{
             width: 12,
@@ -177,97 +170,92 @@ export default function Phase4() {
             backgroundColor: colors.darkText,
             borderRadius: 6,
             position: 'absolute',
-            right: 18,
-            top: 22,
+            right: 32,
+            top: 38,
           }} />
-          {/* Mouth */}
+          {/* Happy mouth */}
           <View style={{
-            width: 8,
-            height: 4,
+            width: 18,
+            height: 9,
             backgroundColor: colors.darkText,
-            borderRadius: 4,
+            borderRadius: 9,
             position: 'absolute',
-            bottom: 26,
+            bottom: 35,
           }} />
-          {/* Cheeks */}
+          {/* Blush cheeks */}
           <View style={{
             width: 8,
             height: 8,
-            backgroundColor: colors.red,
+            backgroundColor: colors.coral,
             borderRadius: 4,
             position: 'absolute',
-            left: 8,
-            top: 34,
+            left: 20,
+            top: 52,
           }} />
           <View style={{
             width: 8,
             height: 8,
-            backgroundColor: colors.red,
+            backgroundColor: colors.coral,
             borderRadius: 4,
             position: 'absolute',
-            right: 8,
-            top: 34,
+            right: 20,
+            top: 52,
           }} />
         </Animated.View>
 
         {/* Battle Progress */}
-        <Text style={[commonStyles.pixelText, { marginVertical: 15, color: colors.text }]}>
-          Dados Revelados: {revealedData.length}/{battleData.length}
+        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
+          🌸 Ataques Revelados: {battlePhase}/{battleData.length}
         </Text>
 
         {/* Attack Button */}
-        {!isBattleComplete && (
+        {!isPhaseComplete && (
           <TouchableOpacity
-            style={[buttonStyles.pixelButton, { backgroundColor: colors.red, marginBottom: 15 }]}
+            style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginBottom: 20 }]}
             onPress={performAttack}
           >
-            <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-              ⚔️ Atacar e Revelar Dados
+            <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
+              ⚔️ Atacar e Revelar Dados! 🌸
             </Text>
           </TouchableOpacity>
         )}
 
-        {/* Revealed Data */}
-        {revealedData.map((dataId) => {
-          const data = battleData.find(d => d.id === dataId);
-          return data ? (
-            <View 
-              key={dataId} 
-              style={[
-                commonStyles.dialogBox, 
-                { 
-                  backgroundColor: data.color,
-                  marginVertical: 5,
-                  width: '90%'
-                }
-              ]}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
-                {data.text}
-              </Text>
+        {/* Battle Results */}
+        {battleData.slice(0, battlePhase).map((data, index) => (
+          <View key={index} style={[commonStyles.dialogBox, { marginVertical: 3, width: '90%', backgroundColor: data.color }]}>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText, marginBottom: 5 }]}>
+              🌸 {data.category}: {data.percentage}%
+            </Text>
+            <View style={[commonStyles.progressBar, { height: 15 }]}>
+              <View 
+                style={[
+                  commonStyles.progressFill, 
+                  { width: `${data.percentage}%`, backgroundColor: colors.darkText }
+                ]} 
+              />
             </View>
-          ) : null;
-        })}
+          </View>
+        ))}
 
-        {/* Final Narration */}
-        {isBattleComplete && (
+        {/* Battle Conclusion */}
+        {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <View style={[commonStyles.dialogBox, { marginBottom: 15 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                A luta é equilibrada… mas o inimigo real é equilibrar desempenho e bem-estar!
+            <View style={[commonStyles.dialogBox, { backgroundColor: colors.cream, marginBottom: 15 }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                🌸 Narrador: A luta é equilibrada... mas o inimigo real é equilibrar desempenho e bem-estar! 💕
               </Text>
             </View>
             
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Batalha Completa! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 12 }]}>
+              🌸✨ Batalha Completa! ✨🌸
             </Text>
             
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.purple }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                Dungeon IRaMuTeQ → 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -279,7 +267,7 @@ export default function Phase4() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            ← Voltar 🌸
           </Text>
         </TouchableOpacity>
       </ScrollView>

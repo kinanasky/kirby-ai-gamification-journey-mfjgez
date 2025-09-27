@@ -10,50 +10,53 @@ export default function Phase3() {
   const router = useRouter();
   const [collectedItems, setCollectedItems] = useState<string[]>([]);
   const [talkedToNPCs, setTalkedToNPCs] = useState<string[]>([]);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [labAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
-  const collectibleItems = [
-    { id: 'prisma', name: '🔮 Pokébola PRISMA', description: 'Metodologia de revisão sistemática' },
-    { id: 'scopus', name: '📊 Terminal Scopus', description: 'Base de dados científica' },
-    { id: 'webofscience', name: '🌐 Web of Science', description: 'Plataforma de pesquisa' },
-    { id: 'riss', name: '🇰🇷 RISS Korea', description: 'Sistema coreano de informação' },
-    { id: 'scielo', name: '🇧🇷 Scielo', description: 'Biblioteca científica brasileira' },
-    { id: 'rabbit', name: '🐰 Research Rabbit', description: 'Descoberta de literatura' }
-  ];
-
-  const specialItems = [
-    { id: 'rayyan', name: '⚡ Rayyan', description: 'Triagem de artigos' },
-    { id: 'iramuteq', name: '🧠 IRaMuTeQ', description: 'Análise textual' },
-    { id: 'jbi', name: '📋 JBI', description: 'Avaliação crítica' },
-    { id: 'matriz', name: '📝 Matriz de Extração', description: 'Organização de dados' }
+  const items = [
+    { id: 'prisma', name: '🔮 PRISMA', description: 'Protocolo para revisões sistemáticas' },
+    { id: 'scopus', name: '🔍 Scopus', description: 'Base de dados científica' },
+    { id: 'webofscience', name: '🌐 Web of Science', description: 'Plataforma de pesquisa acadêmica' },
+    { id: 'riss', name: '🇰🇷 RISS Korea', description: 'Sistema de informação acadêmica coreano' },
+    { id: 'scielo', name: '🇧🇷 SciELO', description: 'Biblioteca científica brasileira' },
+    { id: 'rayyan', name: '⚡ Rayyan', description: 'Ferramenta de triagem de artigos' }
   ];
 
   const npcs = [
-    { id: 'metodologista', name: '👨‍🔬 Dr. Método', criteria: '2015-2025: Período temporal' },
-    { id: 'especialista', name: '👩‍💻 Dra. IA', criteria: 'IA/Gamificação: Tecnologias' },
-    { id: 'geografo', name: '🌍 Prof. Global', criteria: 'Brasil/Coreia: Contextos' },
-    { id: 'avaliador', name: '📊 Dra. Métricas', criteria: 'Efeitos mensuráveis: Resultados' }
+    { id: 'bibliotecario', name: '👨‍🔬 Dr. Silva', dialog: 'Critério temporal: 2015-2025 para capturar a evolução recente!' },
+    { id: 'pesquisadora', name: '👩‍💻 Profa. Kim', dialog: 'Foco em IA e Gamificação na educação Brasil-Coreia!' },
+    { id: 'analista', name: '🧑‍🔬 Especialista', dialog: 'Efeitos mensuráveis são essenciais para validação!' },
+    { id: 'metodologista', name: '👩‍🏫 Dra. Santos', dialog: 'IRaMuTeQ e JBI garantem rigor metodológico!' }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -4,
-          duration: 2200,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
+          duration: 2800,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 2200,
+          duration: 2800,
           useNativeDriver: true,
         }),
       ])
+    ).start();
+
+    // Lab equipment animation
+    Animated.loop(
+      Animated.timing(labAnimation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
@@ -76,8 +79,7 @@ export default function Phase3() {
     router.push('/phase4');
   };
 
-  const allItems = [...collectibleItems, ...specialItems];
-  const isPhaseComplete = collectedItems.length === allItems.length && talkedToNPCs.length === npcs.length;
+  const isPhaseComplete = collectedItems.length >= 4 && talkedToNPCs.length >= 3;
 
   if (!fontsLoaded) {
     return null;
@@ -87,141 +89,179 @@ export default function Phase3() {
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
         {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 3 - Laboratório Pixelado
+        <Text style={[commonStyles.phaseTitle, { color: colors.blue }]}>
+          Fase 3 - Laboratório Real 🔬
         </Text>
 
-        {/* Kirby Character */}
+        {/* Laboratory Environment */}
+        <View style={commonStyles.labBackground}>
+          <Text style={[commonStyles.pixelText, { fontSize: 30, textAlign: 'center', marginBottom: 10 }]}>
+            🔬 ⚗️ 🧪 💻 📊
+          </Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 8, textAlign: 'center', color: colors.darkText }]}>
+            Laboratório de Tecnologia Educacional - UNICAMP
+          </Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 6, textAlign: 'center', color: colors.text, marginTop: 5 }]}>
+            Centro de Pesquisa em IA e Gamificação
+          </Text>
+        </View>
+
+        {/* Floating lab equipment */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { transform: [{ translateY: kirbyAnimation }] }
+            {
+              position: 'absolute',
+              top: 160,
+              left: 25,
+              transform: [
+                {
+                  translateY: labAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -12]
+                  })
+                }
+              ]
+            }
           ]}
         >
-          {/* Eyes */}
+          <Text style={{ fontSize: 25 }}>💻</Text>
+        </Animated.View>
+
+        <Animated.View 
+          style={[
+            {
+              position: 'absolute',
+              top: 190,
+              right: 35,
+              transform: [
+                {
+                  translateY: labAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -8]
+                  })
+                }
+              ]
+            }
+          ]}
+        >
+          <Text style={{ fontSize: 20 }}>📊</Text>
+        </Animated.View>
+
+        {/* Sakura Character */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }] }
+          ]}
+        >
+          {/* Sakura petals */}
+          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
+          {/* Cute eyes */}
           <View style={{
-            width: 14,
-            height: 14,
+            width: 12,
+            height: 12,
             backgroundColor: colors.darkText,
-            borderRadius: 7,
+            borderRadius: 6,
             position: 'absolute',
-            left: 22,
-            top: 28,
+            left: 32,
+            top: 38,
           }} />
           <View style={{
-            width: 14,
-            height: 14,
+            width: 12,
+            height: 12,
             backgroundColor: colors.darkText,
-            borderRadius: 7,
+            borderRadius: 6,
             position: 'absolute',
-            right: 22,
-            top: 28,
+            right: 32,
+            top: 38,
           }} />
-          {/* Mouth */}
+          {/* Happy mouth */}
           <View style={{
-            width: 10,
-            height: 5,
+            width: 18,
+            height: 9,
             backgroundColor: colors.darkText,
-            borderRadius: 5,
+            borderRadius: 9,
             position: 'absolute',
-            bottom: 32,
+            bottom: 35,
           }} />
-          {/* Cheeks */}
+          {/* Blush cheeks */}
           <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            left: 10,
-            top: 42,
+            left: 20,
+            top: 52,
           }} />
           <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            right: 10,
-            top: 42,
+            right: 20,
+            top: 52,
           }} />
         </Animated.View>
 
         {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Itens: {collectedItems.length}/{allItems.length} | NPCs: {talkedToNPCs.length}/{npcs.length}
+          🌸 Itens: {collectedItems.length}/6 | NPCs: {talkedToNPCs.length}/4
         </Text>
 
-        {/* Collectible Items */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.text }]}>
-          Terminais e Ferramentas:
+        {/* Items Grid */}
+        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.blue }]}>
+          Ferramentas de Pesquisa:
         </Text>
-
         <View style={commonStyles.collectibleGrid}>
-          {collectibleItems.map((item) => (
+          {items.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={[
                 buttonStyles.powerUpButton,
                 { 
-                  backgroundColor: collectedItems.includes(item.id) ? colors.accent : colors.blue,
-                  opacity: collectedItems.includes(item.id) ? 1 : 0.7,
-                  width: 120,
-                  height: 60
+                  backgroundColor: collectedItems.includes(item.id) ? colors.blue : colors.grey,
+                  opacity: collectedItems.includes(item.id) ? 1 : 0.6,
+                  borderColor: colors.blue
                 }
               ]}
               onPress={() => collectItem(item.id)}
               disabled={collectedItems.includes(item.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 7, textAlign: 'center' }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
                 {item.name}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Special Items */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.text }]}>
-          Itens Especiais:
-        </Text>
-
-        <View style={commonStyles.collectibleGrid}>
-          {specialItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={[
-                buttonStyles.powerUpButton,
-                { 
-                  backgroundColor: collectedItems.includes(item.id) ? colors.purple : colors.mint,
-                  opacity: collectedItems.includes(item.id) ? 1 : 0.7,
-                  width: 100,
-                  height: 50
-                }
-              ]}
-              onPress={() => collectItem(item.id)}
-              disabled={collectedItems.includes(item.id)}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 7, textAlign: 'center' }]}>
-                {item.name}
+        {/* Show collected item descriptions */}
+        {collectedItems.map((itemId) => {
+          const item = items.find(i => i.id === itemId);
+          return item ? (
+            <View key={itemId} style={[commonStyles.dialogBox, { marginVertical: 3, width: '90%', backgroundColor: colors.lab }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                {item.description}
               </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+            </View>
+          ) : null;
+        })}
 
-        {/* NPCs Section */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.text }]}>
-          Especialistas para Consultar:
+        {/* NPCs */}
+        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.purple }]}>
+          Especialistas do Laboratório:
         </Text>
-
-        {npcs.map((npc) => (
-          <View key={npc.id} style={{ width: '100%', alignItems: 'center', marginVertical: 5 }}>
+        <View style={commonStyles.collectibleGrid}>
+          {npcs.map((npc) => (
             <TouchableOpacity
+              key={npc.id}
               style={[
-                buttonStyles.pixelButton,
+                buttonStyles.cuteButton,
                 { 
-                  backgroundColor: talkedToNPCs.includes(npc.id) ? colors.green : colors.coral,
-                  opacity: talkedToNPCs.includes(npc.id) ? 1 : 0.8,
-                  width: '90%'
+                  backgroundColor: talkedToNPCs.includes(npc.id) ? colors.sakura : colors.grey,
+                  opacity: talkedToNPCs.includes(npc.id) ? 1 : 0.6,
+                  borderColor: colors.purple
                 }
               ]}
               onPress={() => talkToNPC(npc.id)}
@@ -231,29 +271,33 @@ export default function Phase3() {
                 {npc.name}
               </Text>
             </TouchableOpacity>
-            
-            {talkedToNPCs.includes(npc.id) && (
-              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
-                  {npc.criteria}
-                </Text>
-              </View>
-            )}
-          </View>
-        ))}
+          ))}
+        </View>
+
+        {/* Show NPC dialogs */}
+        {talkedToNPCs.map((npcId) => {
+          const npc = npcs.find(n => n.id === npcId);
+          return npc ? (
+            <View key={npcId} style={[commonStyles.dialogBox, { marginVertical: 3, width: '90%', backgroundColor: colors.cream }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                🌸 {npc.dialog}
+              </Text>
+            </View>
+          ) : null;
+        })}
 
         {/* Mission Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Metodologia Estabelecida! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.blue, marginBottom: 15, fontSize: 12 }]}>
+              🌸✨ Metodologia Completa! ✨🌸
             </Text>
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                Arena Pokémon → 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -265,7 +309,7 @@ export default function Phase3() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            ← Voltar 🌸
           </Text>
         </TouchableOpacity>
       </ScrollView>

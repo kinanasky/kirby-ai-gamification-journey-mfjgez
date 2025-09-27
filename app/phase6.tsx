@@ -9,11 +9,9 @@ import { useRouter } from 'expo-router';
 export default function Phase6() {
   const router = useRouter();
   const [defeatedBosses, setDefeatedBosses] = useState<string[]>([]);
-  const [currentBoss, setCurrentBoss] = useState<string | null>(null);
   const [showNPCDialogs, setShowNPCDialogs] = useState(false);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
-  const [brasilAnimation] = useState(new Animated.Value(0));
-  const [koreaAnimation] = useState(new Animated.Value(0));
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [cooperativeAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -23,104 +21,76 @@ export default function Phase6() {
     { 
       id: 'saturacao', 
       name: '📱 Saturação Digital', 
-      description: 'O excesso de tecnologia pode causar fadiga e resistência',
+      description: 'Excesso de tecnologia prejudica o aprendizado',
       color: colors.red
     },
     { 
       id: 'vulnerabilidade', 
-      name: '🏚️ Vulnerabilidade Social', 
-      description: 'Desigualdades de acesso e oportunidades educacionais',
+      name: '💔 Vulnerabilidade Social', 
+      description: 'Desigualdades impedem acesso equitativo',
       color: colors.orange
     },
     { 
       id: 'medo', 
       name: '😰 Medo da IA', 
-      description: 'Receios sobre substituição e perda de controle humano',
+      description: 'Resistência e falta de compreensão tecnológica',
       color: colors.purple
     }
   ];
 
-  const npcs = [
+  const npcDialogs = [
     { 
-      id: 'leon', 
-      name: 'Leon', 
-      dialog: 'A IA pode monitorar emoções e detectar sinais de estresse em tempo real!'
+      name: 'Leon et al.', 
+      dialog: 'A IA pode monitorar emoções dos estudantes de enfermagem durante simulações clínicas!' 
     },
     { 
-      id: 'chen', 
-      name: 'Chen', 
-      dialog: 'Ela age de forma preventiva, oferecendo suporte antes que problemas se agravem!'
+      name: 'Chen et al.', 
+      dialog: 'Ela age de forma preventiva, identificando dificuldades antes que se tornem problemas!' 
     },
     { 
-      id: 'kim', 
       name: 'Kim & Kim', 
-      dialog: 'Mas precisamos de transparência e formação contínua para educadores e estudantes!'
+      dialog: 'Mas precisamos de transparência e formação contínua dos professores!' 
     }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -4,
-          duration: 1800,
+        Animated.timing(sakuraAnimation, {
+          toValue: -18,
+          duration: 3500,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 1800,
+          duration: 3500,
           useNativeDriver: true,
         }),
       ])
     ).start();
 
-    // Brasil and Korea cooperation animation
+    // Cooperative battle animation
     Animated.loop(
-      Animated.sequence([
-        Animated.timing(brasilAnimation, {
-          toValue: 10,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(brasilAnimation, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(koreaAnimation, {
-          toValue: -10,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(koreaAnimation, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
+      Animated.timing(cooperativeAnimation, {
+        toValue: 1,
+        duration: 2500,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
   const challengeBoss = (bossId: string) => {
-    setCurrentBoss(bossId);
-    console.log(`Challenging global boss: ${bossId}`);
+    if (!defeatedBosses.includes(bossId)) {
+      setDefeatedBosses([...defeatedBosses, bossId]);
+      console.log(`Global boss challenged: ${bossId}`);
+    }
   };
 
   const defeatBoss = () => {
-    if (currentBoss && !defeatedBosses.includes(currentBoss)) {
-      setDefeatedBosses([...defeatedBosses, currentBoss]);
-      console.log(`Global boss defeated: ${currentBoss}`);
-      setCurrentBoss(null);
-      
-      if (defeatedBosses.length + 1 === globalBosses.length) {
-        setShowNPCDialogs(true);
-      }
+    if (defeatedBosses.length === globalBosses.length && !showNPCDialogs) {
+      setShowNPCDialogs(true);
+      console.log('All bosses defeated, showing NPC dialogs');
     }
   };
 
@@ -131,6 +101,12 @@ export default function Phase6() {
 
   const isPhaseComplete = defeatedBosses.length === globalBosses.length && showNPCDialogs;
 
+  useEffect(() => {
+    if (defeatedBosses.length === globalBosses.length) {
+      defeatBoss();
+    }
+  }, [defeatedBosses]);
+
   if (!fontsLoaded) {
     return null;
   }
@@ -139,90 +115,92 @@ export default function Phase6() {
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
         {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 6 - Batalha Cooperativa
+        <Text style={[commonStyles.phaseTitle, { color: colors.accent }]}>
+          🌸 Fase 6 - Batalha Cooperativa 🌸
         </Text>
 
-        {/* Cooperation Display */}
-        <View style={{
-          width: '100%',
-          height: 120,
-          backgroundColor: colors.mint,
-          borderWidth: 2,
-          borderColor: colors.darkText,
-          borderRadius: 10,
-          marginBottom: 20,
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'row',
-          paddingHorizontal: 20
-        }}>
-          {/* Brasil */}
+        {/* Cooperative Battle Environment */}
+        <View style={[commonStyles.card, { backgroundColor: colors.sky, marginBottom: 20, width: '95%' }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 30, textAlign: 'center', marginBottom: 10 }]}>
+            🤝 🌍 ⚔️ 🌍 🤝
+          </Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 8, textAlign: 'center', color: colors.darkText }]}>
+            Arena Global - Brasil & Coreia Unidos
+          </Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 6, textAlign: 'center', color: colors.text, marginTop: 5 }]}>
+            Enfrentando Desafios Universais Juntos
+          </Text>
+        </View>
+
+        {/* Cooperative Flags */}
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
           <Animated.View 
             style={[
               {
-                width: 60,
-                height: 60,
-                backgroundColor: colors.green,
-                borderRadius: 30,
-                borderWidth: 2,
-                borderColor: colors.darkText,
                 alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 20
-              },
-              { transform: [{ translateX: brasilAnimation }] }
+                marginRight: 20,
+                transform: [
+                  {
+                    scale: cooperativeAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.1]
+                    })
+                  }
+                ]
+              }
             ]}
           >
-            <Text style={[commonStyles.pixelText, { fontSize: 16 }]}>🇧🇷</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Brasil</Text>
+            <Text style={{ fontSize: 40 }}>🇧🇷</Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.green }]}>
+              Brasil
+            </Text>
           </Animated.View>
 
-          {/* Cooperation Symbol */}
-          <Text style={[commonStyles.pixelText, { fontSize: 20, color: colors.accent }]}>🤝</Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 16, color: colors.primary, marginHorizontal: 10 }]}>
+            🤝
+          </Text>
 
-          {/* Coreia */}
           <Animated.View 
             style={[
               {
-                width: 60,
-                height: 60,
-                backgroundColor: colors.blue,
-                borderRadius: 30,
-                borderWidth: 2,
-                borderColor: colors.darkText,
                 alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: 20
-              },
-              { transform: [{ translateX: koreaAnimation }] }
+                marginLeft: 20,
+                transform: [
+                  {
+                    scale: cooperativeAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1.1, 1]
+                    })
+                  }
+                ]
+              }
             ]}
           >
-            <Text style={[commonStyles.pixelText, { fontSize: 16 }]}>🇰🇷</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Coreia</Text>
+            <Text style={{ fontSize: 40 }}>🇰🇷</Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.red }]}>
+              Coreia
+            </Text>
           </Animated.View>
         </View>
 
-        {/* Kirby Character */}
+        {/* Sakura Character */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { 
-              width: 80,
-              height: 80,
-              transform: [{ translateY: kirbyAnimation }] 
-            }
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }] }
           ]}
         >
-          {/* Eyes */}
+          {/* Sakura petals */}
+          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
+          {/* Cute eyes */}
           <View style={{
             width: 12,
             height: 12,
             backgroundColor: colors.darkText,
             borderRadius: 6,
             position: 'absolute',
-            left: 18,
-            top: 22,
+            left: 32,
+            top: 38,
           }} />
           <View style={{
             width: 12,
@@ -230,108 +208,102 @@ export default function Phase6() {
             backgroundColor: colors.darkText,
             borderRadius: 6,
             position: 'absolute',
-            right: 18,
-            top: 22,
+            right: 32,
+            top: 38,
           }} />
-          {/* Mouth */}
+          {/* Happy mouth */}
           <View style={{
-            width: 8,
-            height: 4,
+            width: 18,
+            height: 9,
             backgroundColor: colors.darkText,
-            borderRadius: 4,
+            borderRadius: 9,
             position: 'absolute',
-            bottom: 26,
+            bottom: 35,
           }} />
-          {/* Cheeks */}
+          {/* Blush cheeks */}
           <View style={{
             width: 8,
             height: 8,
-            backgroundColor: colors.red,
+            backgroundColor: colors.coral,
             borderRadius: 4,
             position: 'absolute',
-            left: 8,
-            top: 34,
+            left: 20,
+            top: 52,
           }} />
           <View style={{
             width: 8,
             height: 8,
-            backgroundColor: colors.red,
+            backgroundColor: colors.coral,
             borderRadius: 4,
             position: 'absolute',
-            right: 8,
-            top: 34,
+            right: 20,
+            top: 52,
           }} />
         </Animated.View>
 
         {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Chefes Globais Derrotados: {defeatedBosses.length}/{globalBosses.length}
+          🌸 Chefes Globais Derrotados: {defeatedBosses.length}/3
         </Text>
 
         {/* Global Bosses */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Desafios Universais:
+        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.accent }]}>
+          🌸 Chefes Globais:
         </Text>
 
-        {globalBosses.map((boss) => (
-          <View key={boss.id} style={{ width: '100%', alignItems: 'center', marginVertical: 8 }}>
+        <View style={commonStyles.collectibleGrid}>
+          {globalBosses.map((boss) => (
             <TouchableOpacity
+              key={boss.id}
               style={[
-                buttonStyles.pixelButton,
+                buttonStyles.cuteButton,
                 { 
-                  backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : boss.color,
-                  opacity: defeatedBosses.includes(boss.id) ? 0.6 : 1,
-                  width: '90%'
+                  backgroundColor: defeatedBosses.includes(boss.id) ? boss.color : colors.grey,
+                  opacity: defeatedBosses.includes(boss.id) ? 1 : 0.6,
+                  borderColor: colors.accent,
+                  width: 140,
+                  height: 70,
+                  margin: 8
                 }
               ]}
               onPress={() => challengeBoss(boss.id)}
               disabled={defeatedBosses.includes(boss.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 9, color: colors.card }]}>
-                {boss.name} {defeatedBosses.includes(boss.id) ? '✓' : ''}
+              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, textAlign: 'center' }]}>
+                {boss.name}
               </Text>
             </TouchableOpacity>
-            
-            {defeatedBosses.includes(boss.id) && (
-              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
-                  {boss.description}
-                </Text>
-              </View>
-            )}
-          </View>
-        ))}
+          ))}
+        </View>
 
-        {/* Current Battle */}
-        {currentBoss && (
-          <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.red, marginBottom: 10 }]}>
-              Brasil e Coreia lutam juntos contra: {globalBosses.find(b => b.id === currentBoss)?.name}
-            </Text>
-            <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.red }]}
-              onPress={defeatBoss}
-            >
-              <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-                ⚔️ Atacar Juntos
+        {/* Show defeated boss descriptions */}
+        {defeatedBosses.map((bossId) => {
+          const boss = globalBosses.find(b => b.id === bossId);
+          return boss ? (
+            <View key={bossId} style={[commonStyles.dialogBox, { marginVertical: 5, width: '95%', backgroundColor: boss.color }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, marginBottom: 5 }]}>
+                🌸 {boss.name} Derrotado!
               </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+              <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                {boss.description}
+              </Text>
+            </View>
+          ) : null;
+        })}
 
-        {/* NPC Dialogs */}
+        {/* NPC Dialogs after victory */}
         {showNPCDialogs && (
           <View style={{ width: '100%', alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              Especialistas Falam:
+            <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.primary, fontSize: 10 }]}>
+              🌸 Especialistas Falam:
             </Text>
             
-            {npcs.map((npc) => (
-              <View key={npc.id} style={[commonStyles.dialogBox, { marginVertical: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.text, marginBottom: 5 }]}>
-                  {npc.name}:
+            {npcDialogs.map((npc, index) => (
+              <View key={index} style={[commonStyles.dialogBox, { marginVertical: 5, width: '95%', backgroundColor: colors.cream }]}>
+                <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, marginBottom: 5 }]}>
+                  🌸 {npc.name}:
                 </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
+                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.text }]}>
                   {npc.dialog}
                 </Text>
               </View>
@@ -342,16 +314,15 @@ export default function Phase6() {
         {/* Mission Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Cooperação Vitoriosa! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 12 }]}>
+              🌸✨ Cooperação Global Vitoriosa! ✨🌸
             </Text>
-            
             <TouchableOpacity
               style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                Mapa Mágico → 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -363,7 +334,7 @@ export default function Phase6() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            ← Voltar 🌸
           </Text>
         </TouchableOpacity>
       </ScrollView>

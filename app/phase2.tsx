@@ -10,41 +10,50 @@ export default function Phase2() {
   const router = useRouter();
   const [collectedPowerUps, setCollectedPowerUps] = useState<string[]>([]);
   const [defeatedEnemies, setDefeatedEnemies] = useState(0);
-  const [currentDialog, setCurrentDialog] = useState(0);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [enemyAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
   const powerUps = [
-    { id: 'ia', name: '💙 IA', description: 'Absorve dados e cria rotas personalizadas' },
-    { id: 'gamification', name: '💛 Gamificação', description: 'Aumenta motivação e engajamento' }
+    { id: 'ia', name: '💙 IA', description: 'Absorve dados e cria rotas personalizadas de aprendizado' },
+    { id: 'gamificacao', name: '💛 Gamificação', description: 'Aumenta motivação e engajamento dos estudantes' }
   ];
 
-  const timelineDialogs = [
-    "70s: Tutores inteligentes!",
-    "80s: Sistemas especialistas!",
-    "90s: Agentes autônomos!",
-    "2010+: Deep Learning!",
-    "A Gamificação nos dá Autonomia, Competência e Conexão Social!"
+  const timelineEvents = [
+    { decade: '70s', event: 'Tutores inteligentes pioneiros!' },
+    { decade: '80s', event: 'Sistemas especialistas educacionais!' },
+    { decade: '90s', event: 'Agentes autônomos de aprendizagem!' },
+    { decade: '2010+', event: 'Deep Learning revoluciona a educação!' },
+    { decade: 'Hoje', event: 'Gamificação nos dá Autonomia, Competência e Conexão Social!' }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -6,
-          duration: 1800,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
+          duration: 2500,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 1800,
+          duration: 2500,
           useNativeDriver: true,
         }),
       ])
+    ).start();
+
+    // Enemy (flying books) animation
+    Animated.loop(
+      Animated.timing(enemyAnimation, {
+        toValue: 1,
+        duration: 3500,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
@@ -58,7 +67,6 @@ export default function Phase2() {
   const defeatEnemy = () => {
     if (defeatedEnemies < 5) {
       setDefeatedEnemies(defeatedEnemies + 1);
-      setCurrentDialog(defeatedEnemies);
       console.log(`Enemy defeated! Total: ${defeatedEnemies + 1}`);
     }
   };
@@ -68,7 +76,7 @@ export default function Phase2() {
     router.push('/phase3');
   };
 
-  const isPhaseComplete = collectedPowerUps.length === 2 && defeatedEnemies === 5;
+  const isPhaseComplete = collectedPowerUps.length === 2 && defeatedEnemies >= 3;
 
   if (!fontsLoaded) {
     return null;
@@ -78,71 +86,118 @@ export default function Phase2() {
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
         {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 2 - Fundamentação Teórica
+        <Text style={[commonStyles.phaseTitle, { color: colors.purple }]}>
+          🌸 Fase 2 - Fundamentação Teórica 🌸
         </Text>
 
-        {/* Kirby Character */}
+        {/* Floating enemy books */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { transform: [{ translateY: kirbyAnimation }] }
+            {
+              position: 'absolute',
+              top: 120,
+              left: 20,
+              transform: [
+                {
+                  translateX: enemyAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 100]
+                  })
+                }
+              ]
+            }
           ]}
         >
-          {/* Eyes */}
+          <Text style={{ fontSize: 25 }}>📚</Text>
+        </Animated.View>
+
+        <Animated.View 
+          style={[
+            {
+              position: 'absolute',
+              top: 160,
+              right: 30,
+              transform: [
+                {
+                  translateX: enemyAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -80]
+                  })
+                }
+              ]
+            }
+          ]}
+        >
+          <Text style={{ fontSize: 20 }}>📖</Text>
+        </Animated.View>
+
+        {/* Sakura Character */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }] }
+          ]}
+        >
+          {/* Sakura petals */}
+          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
+          {/* Cute eyes */}
           <View style={{
-            width: 14,
-            height: 14,
+            width: 12,
+            height: 12,
             backgroundColor: colors.darkText,
-            borderRadius: 7,
+            borderRadius: 6,
             position: 'absolute',
-            left: 22,
-            top: 28,
+            left: 32,
+            top: 38,
           }} />
           <View style={{
-            width: 14,
-            height: 14,
+            width: 12,
+            height: 12,
             backgroundColor: colors.darkText,
-            borderRadius: 7,
+            borderRadius: 6,
             position: 'absolute',
-            right: 22,
-            top: 28,
+            right: 32,
+            top: 38,
           }} />
-          {/* Mouth */}
+          {/* Happy mouth */}
           <View style={{
-            width: 10,
-            height: 5,
+            width: 18,
+            height: 9,
             backgroundColor: colors.darkText,
-            borderRadius: 5,
+            borderRadius: 9,
             position: 'absolute',
-            bottom: 32,
+            bottom: 35,
           }} />
-          {/* Cheeks */}
+          {/* Blush cheeks */}
           <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            left: 10,
-            top: 42,
+            left: 20,
+            top: 52,
           }} />
           <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            right: 10,
-            top: 42,
+            right: 20,
+            top: 52,
           }} />
         </Animated.View>
 
-        {/* Power-ups Section */}
+        {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Power-ups Coletáveis:
+          🌸 Power-ups: {collectedPowerUps.length}/2 | Inimigos: {defeatedEnemies}/5
         </Text>
 
+        {/* Power-ups */}
+        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.purple }]}>
+          Power-ups Coletáveis:
+        </Text>
         <View style={commonStyles.collectibleGrid}>
           {powerUps.map((powerUp) => (
             <TouchableOpacity
@@ -150,88 +205,80 @@ export default function Phase2() {
               style={[
                 buttonStyles.powerUpButton,
                 { 
-                  backgroundColor: collectedPowerUps.includes(powerUp.id) ? colors.accent : colors.blue,
-                  opacity: collectedPowerUps.includes(powerUp.id) ? 1 : 0.7
+                  backgroundColor: collectedPowerUps.includes(powerUp.id) ? colors.blue : colors.grey,
+                  opacity: collectedPowerUps.includes(powerUp.id) ? 1 : 0.6,
+                  borderColor: colors.purple
                 }
               ]}
               onPress={() => collectPowerUp(powerUp.id)}
               disabled={collectedPowerUps.includes(powerUp.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
                 {powerUp.name}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Show power-up descriptions */}
+        {/* Show collected power-up descriptions */}
         {collectedPowerUps.map((powerUpId) => {
           const powerUp = powerUps.find(p => p.id === powerUpId);
           return powerUp ? (
-            <View key={powerUpId} style={[commonStyles.dialogBox, { marginVertical: 5 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                {powerUp.description}
+            <View key={powerUpId} style={[commonStyles.dialogBox, { marginVertical: 5, width: '90%', backgroundColor: colors.cream }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                🌸 {powerUp.description}
               </Text>
             </View>
           ) : null;
         })}
 
-        {/* Enemies Section */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 15, color: colors.text }]}>
-          Inimigos: Livros Voadores 📚
+        {/* Enemy Battle */}
+        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.red }]}>
+          🌸 Derrote os Livros Voadores:
         </Text>
-
-        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.text }]}>
-          Derrotados: {defeatedEnemies}/5
-        </Text>
-
-        <View style={commonStyles.progressBar}>
-          <View 
-            style={[
-              commonStyles.progressFill, 
-              { width: `${(defeatedEnemies / 5) * 100}%` }
-            ]} 
-          />
-        </View>
-
         <TouchableOpacity
           style={[
-            buttonStyles.pixelButton, 
+            buttonStyles.pixelButton,
             { 
-              backgroundColor: colors.red,
-              marginVertical: 15,
-              opacity: defeatedEnemies >= 5 ? 0.5 : 1
+              backgroundColor: defeatedEnemies >= 5 ? colors.green : colors.red,
+              marginBottom: 20
             }
           ]}
           onPress={defeatEnemy}
           disabled={defeatedEnemies >= 5}
         >
-          <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-            ⚔️ Derrotar Livro
+          <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
+            {defeatedEnemies >= 5 ? '🌸 Todos Derrotados! 🌸' : `⚔️ Atacar (${defeatedEnemies}/5)`}
           </Text>
         </TouchableOpacity>
 
-        {/* Timeline Dialog */}
-        {defeatedEnemies > 0 && (
-          <View style={[commonStyles.dialogBox, { marginTop: 10 }]}>
-            <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-              {timelineDialogs[currentDialog]}
+        {/* Timeline */}
+        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.accent }]}>
+          🌸 Linha do Tempo da IA:
+        </Text>
+        {timelineEvents.map((event, index) => (
+          <View key={index} style={[commonStyles.dialogBox, { marginVertical: 3, width: '90%', backgroundColor: colors.mint }]}>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText, marginBottom: 5 }]}>
+              {event.decade}
+            </Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.text }]}>
+              🌸 {event.event}
             </Text>
           </View>
-        )}
+        ))}
 
         {/* Mission Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Fundamentação Completa! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.purple, marginBottom: 15, fontSize: 12 }]}>
+              🌸✨ Teoria Dominada! ✨🌸
             </Text>
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.blue }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                Laboratório → 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -243,7 +290,7 @@ export default function Phase2() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            ← Voltar 🌸
           </Text>
         </TouchableOpacity>
       </ScrollView>

@@ -2,11 +2,11 @@
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
-  primary: '#FFB6C1',      // Light pink like Sakura
+  primary: '#FFB6C1',      // Light pink like Kirby
   secondary: '#E6E6FA',    // Lavender
   accent: '#FFD700',       // Gold for stars
-  background: '#FFF5F8',   // Very soft pink background
-  backgroundAlt: '#F0F8FF', // Alice blue
+  background: '#F0F8FF',   // Alice blue - very soft
+  backgroundAlt: '#FFF0F5', // Lavender blush
   text: '#4B0082',         // Indigo - softer than black
   grey: '#D3D3D3',         // Light gray
   card: '#FFFFFF',         // White cards
@@ -18,13 +18,10 @@ export const colors = {
   darkText: '#2F2F2F',     // Dark gray instead of black
   blue: '#B0E0E6',         // Powder blue
   mint: '#F0FFF0',         // Honeydew
-  coral: '#FFB07A',        // Light salmon
+  coral: '#F0E68C',        // Khaki
   rose: '#FFE4E1',         // Misty rose
   sky: '#87CEEB',          // Sky blue
   cream: '#FFFACD',        // Lemon chiffon
-  sakura: '#FFCCCB',       // Light coral for sakura theme
-  library: '#F5F5DC',      // Beige for library
-  lab: '#E0FFFF',          // Light cyan for laboratory
 };
 
 export const buttonStyles = StyleSheet.create({
@@ -40,28 +37,24 @@ export const buttonStyles = StyleSheet.create({
   },
   pixelButton: {
     backgroundColor: colors.primary,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: colors.darkText,
     paddingHorizontal: 20,
     paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 8,
-    boxShadow: '3px 3px 0px rgba(47, 47, 47, 0.3)',
-    elevation: 4,
+    borderRadius: 4,
   },
   starButton: {
     backgroundColor: colors.accent,
     borderWidth: 2,
     borderColor: colors.darkText,
-    width: 45,
-    height: 45,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 22,
-    margin: 6,
-    boxShadow: '2px 2px 0px rgba(47, 47, 47, 0.2)',
-    elevation: 3,
+    borderRadius: 20,
+    margin: 5,
   },
   powerUpButton: {
     backgroundColor: colors.blue,
@@ -71,23 +64,8 @@ export const buttonStyles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
-    margin: 6,
-    boxShadow: '2px 2px 0px rgba(47, 47, 47, 0.2)',
-    elevation: 3,
-  },
-  cuteButton: {
-    backgroundColor: colors.sakura,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 20,
+    borderRadius: 8,
     margin: 5,
-    boxShadow: '2px 2px 0px rgba(255, 182, 193, 0.4)',
-    elevation: 3,
   },
 });
 
@@ -112,7 +90,6 @@ export const commonStyles = StyleSheet.create({
     maxWidth: 800,
     width: '100%',
     paddingHorizontal: 20,
-    paddingVertical: 20,
   },
   title: {
     fontSize: 20,
@@ -149,14 +126,14 @@ export const commonStyles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.card,
-    borderColor: colors.primary,
+    borderColor: colors.darkText,
     borderWidth: 2,
-    borderRadius: 12,
-    padding: 18,
+    borderRadius: 8,
+    padding: 15,
     marginVertical: 8,
     width: '100%',
-    boxShadow: '3px 3px 6px rgba(255, 182, 193, 0.3)',
-    elevation: 4,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+    elevation: 3,
   },
   icon: {
     width: 60,
@@ -171,45 +148,43 @@ export const commonStyles = StyleSheet.create({
   dialogBox: {
     backgroundColor: colors.card,
     borderWidth: 2,
-    borderColor: colors.primary,
-    borderRadius: 12,
-    padding: 18,
-    margin: 12,
-    boxShadow: '3px 3px 6px rgba(255, 182, 193, 0.3)',
-    elevation: 4,
+    borderColor: colors.darkText,
+    borderRadius: 8,
+    padding: 15,
+    margin: 10,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+    elevation: 3,
   },
   star: {
-    width: 35,
-    height: 35,
+    width: 30,
+    height: 30,
     backgroundColor: colors.accent,
     borderWidth: 2,
     borderColor: colors.darkText,
-    borderRadius: 18,
+    borderRadius: 15,
   },
-  sakuraCharacter: {
-    width: 120,
-    height: 120,
-    backgroundColor: colors.rose,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: colors.primary,
+  kirbyCharacter: {
+    width: 100,
+    height: 100,
+    backgroundColor: colors.primary,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: colors.darkText,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    boxShadow: '4px 4px 8px rgba(255, 182, 193, 0.4)',
-    elevation: 5,
   },
   phaseContainer: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: 18,
+    padding: 15,
   },
   phaseTitle: {
     fontSize: 16,
     fontFamily: 'PressStart2P_400Regular',
     color: colors.darkText,
     textAlign: 'center',
-    marginBottom: 25,
+    marginBottom: 20,
   },
   collectibleGrid: {
     flexDirection: 'row',
@@ -219,33 +194,16 @@ export const commonStyles = StyleSheet.create({
   },
   progressBar: {
     width: '100%',
-    height: 24,
+    height: 20,
     backgroundColor: colors.grey,
     borderWidth: 2,
     borderColor: colors.darkText,
-    borderRadius: 12,
-    marginVertical: 12,
-    overflow: 'hidden',
+    borderRadius: 10,
+    marginVertical: 10,
   },
   progressFill: {
     height: '100%',
     backgroundColor: colors.accent,
-    borderRadius: 10,
-  },
-  libraryBackground: {
-    backgroundColor: colors.library,
-    borderWidth: 2,
-    borderColor: colors.darkText,
-    borderRadius: 15,
-    padding: 20,
-    margin: 10,
-  },
-  labBackground: {
-    backgroundColor: colors.lab,
-    borderWidth: 2,
-    borderColor: colors.darkText,
-    borderRadius: 15,
-    padding: 20,
-    margin: 10,
+    borderRadius: 8,
   },
 });

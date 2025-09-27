@@ -9,10 +9,8 @@ import { useRouter } from 'expo-router';
 export default function Phase7() {
   const router = useRouter();
   const [collectedPieces, setCollectedPieces] = useState<string[]>([]);
-  const [portalOpen, setPortalOpen] = useState(false);
-  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [kirbyAnimation] = useState(new Animated.Value(0));
   const [mapAnimation] = useState(new Animated.Value(0));
-  const [portalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -22,78 +20,74 @@ export default function Phase7() {
     { 
       id: 'infraestrutura', 
       name: '🏗️ Infraestrutura', 
-      description: 'Infraestrutura e Acesso Equitativo para todos',
+      description: 'Infraestrutura e Acesso Equitativo - Garantir conectividade e dispositivos para todos',
       color: colors.blue
     },
     { 
       id: 'formacao', 
-      name: '👩‍🏫 Formação Docente', 
-      description: 'Formação Docente continuada e especializada',
+      name: '👨‍🏫 Formação', 
+      description: 'Formação Docente - Capacitação contínua em tecnologias educacionais',
       color: colors.green
     },
     { 
       id: 'gamificacao', 
       name: '🎮 Gamificação', 
-      description: 'Gamificação Colaborativa e engajante',
+      description: 'Gamificação Colaborativa - Elementos de jogo que promovem cooperação',
       color: colors.purple
     },
     { 
       id: 'ia_personalizada', 
       name: '🤖 IA Personalizada', 
-      description: 'IA Personalizada para cada estudante',
+      description: 'IA Personalizada - Adaptação às necessidades individuais dos estudantes',
       color: colors.accent
     },
     { 
       id: 'integracao', 
-      name: '🔗 Integração', 
-      description: 'Integração Presencial–Virtual harmoniosa',
-      color: colors.orange
+      name: '🔄 Integração', 
+      description: 'Integração Presencial–Virtual - Hibridização eficaz dos ambientes',
+      color: colors.coral
     },
     { 
       id: 'etica', 
       name: '⚖️ Ética', 
-      description: 'Ética, Privacidade e Cultura respeitadas',
-      color: colors.coral
+      description: 'Ética, Privacidade e Cultura - Respeito aos valores e proteção de dados',
+      color: colors.red
     }
   ];
 
   useEffect(() => {
-    // Sakura floating animation
+    // Kirby floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(sakuraAnimation, {
-          toValue: -20,
-          duration: 4000,
+        Animated.timing(kirbyAnimation, {
+          toValue: -6,
+          duration: 2200,
           useNativeDriver: true,
         }),
-        Animated.timing(sakuraAnimation, {
+        Animated.timing(kirbyAnimation, {
           toValue: 0,
-          duration: 4000,
+          duration: 2200,
           useNativeDriver: true,
         }),
       ])
     ).start();
 
-    // Map magical animation
+    // Map magical glow animation
     Animated.loop(
-      Animated.timing(mapAnimation, {
-        toValue: 1,
-        duration: 3000,
-        useNativeDriver: true,
-      })
+      Animated.sequence([
+        Animated.timing(mapAnimation, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(mapAnimation, {
+          toValue: 0.3,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
     ).start();
   }, []);
-
-  useEffect(() => {
-    if (portalOpen) {
-      // Portal opening animation
-      Animated.timing(portalAnimation, {
-        toValue: 1,
-        duration: 2000,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [portalOpen]);
 
   const collectPiece = (pieceId: string) => {
     if (!collectedPieces.includes(pieceId)) {
@@ -103,24 +97,11 @@ export default function Phase7() {
   };
 
   const openPortal = () => {
-    if (collectedPieces.length === mapPieces.length && !portalOpen) {
-      setPortalOpen(true);
-      console.log('Portal opened!');
-    }
-  };
-
-  const nextPhase = () => {
-    console.log('Moving to Final Phase');
+    console.log('Opening final portal');
     router.push('/final');
   };
 
   const isPhaseComplete = collectedPieces.length === mapPieces.length;
-
-  useEffect(() => {
-    if (isPhaseComplete) {
-      openPortal();
-    }
-  }, [isPhaseComplete]);
 
   if (!fontsLoaded) {
     return null;
@@ -130,202 +111,170 @@ export default function Phase7() {
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
         {/* Phase Title */}
-        <Text style={[commonStyles.phaseTitle, { color: colors.accent }]}>
-          🌸 Fase 7 - Mapa Mágico 🌸
+        <Text style={commonStyles.phaseTitle}>
+          Fase 7 - Mapa Mágico
         </Text>
 
-        {/* Magical Map Environment */}
+        {/* Magical Map Display */}
         <Animated.View 
           style={[
-            commonStyles.card, 
-            { 
-              backgroundColor: colors.cream, 
-              marginBottom: 20, 
-              width: '95%',
-              transform: [
-                {
-                  scale: mapAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1, 1.05]
-                  })
-                }
-              ]
+            {
+              width: 200,
+              height: 150,
+              backgroundColor: colors.cream,
+              borderWidth: 3,
+              borderColor: colors.darkText,
+              borderRadius: 15,
+              marginBottom: 20,
+              alignItems: 'center',
+              justifyContent: 'center',
+              opacity: mapAnimation
             }
           ]}
         >
-          <Text style={[commonStyles.pixelText, { fontSize: 30, textAlign: 'center', marginBottom: 10 }]}>
-            🗺️ ✨ 🌟 ✨ 🗺️
+          <Text style={[commonStyles.pixelText, { fontSize: 20 }]}>🗺️</Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 8, marginTop: 10 }]}>
+            Modelo de Diretrizes
           </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 8, textAlign: 'center', color: colors.darkText }]}>
-            Mapa das Diretrizes Educacionais
-          </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 6, textAlign: 'center', color: colors.text, marginTop: 5 }]}>
-            Modelo Integrado Brasil-Coreia
+          <Text style={[commonStyles.pixelText, { fontSize: 6, marginTop: 5 }]}>
+            {collectedPieces.length}/6 peças
           </Text>
         </Animated.View>
 
-        {/* Portal (if opened) */}
-        {portalOpen && (
-          <Animated.View 
-            style={[
-              {
-                width: 150,
-                height: 150,
-                backgroundColor: colors.sky,
-                borderRadius: 75,
-                borderWidth: 4,
-                borderColor: colors.primary,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 20,
-                opacity: portalAnimation,
-                transform: [
-                  {
-                    scale: portalAnimation.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 1]
-                    })
-                  }
-                ]
-              }
-            ]}
-          >
-            <Text style={{ fontSize: 50 }}>🌀</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText, marginTop: 5 }]}>
-              Portal Final
-            </Text>
-          </Animated.View>
-        )}
-
-        {/* Sakura Character */}
+        {/* Kirby Character */}
         <Animated.View 
           style={[
-            commonStyles.sakuraCharacter,
-            { transform: [{ translateY: sakuraAnimation }] }
+            commonStyles.kirbyCharacter,
+            { transform: [{ translateY: kirbyAnimation }] }
           ]}
         >
-          {/* Sakura petals */}
-          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
-          {/* Cute eyes */}
+          {/* Eyes */}
           <View style={{
-            width: 12,
-            height: 12,
+            width: 14,
+            height: 14,
             backgroundColor: colors.darkText,
-            borderRadius: 6,
+            borderRadius: 7,
             position: 'absolute',
-            left: 32,
-            top: 38,
+            left: 22,
+            top: 28,
           }} />
           <View style={{
-            width: 12,
-            height: 12,
+            width: 14,
+            height: 14,
             backgroundColor: colors.darkText,
-            borderRadius: 6,
+            borderRadius: 7,
             position: 'absolute',
-            right: 32,
-            top: 38,
+            right: 22,
+            top: 28,
           }} />
-          {/* Happy mouth */}
+          {/* Mouth */}
           <View style={{
-            width: 18,
-            height: 9,
+            width: 10,
+            height: 5,
             backgroundColor: colors.darkText,
-            borderRadius: 9,
+            borderRadius: 5,
             position: 'absolute',
-            bottom: 35,
+            bottom: 32,
           }} />
-          {/* Blush cheeks */}
+          {/* Cheeks */}
           <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
+            width: 10,
+            height: 10,
+            backgroundColor: colors.red,
+            borderRadius: 5,
             position: 'absolute',
-            left: 20,
-            top: 52,
+            left: 10,
+            top: 42,
           }} />
           <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
+            width: 10,
+            height: 10,
+            backgroundColor: colors.red,
+            borderRadius: 5,
             position: 'absolute',
-            right: 20,
-            top: 52,
+            right: 10,
+            top: 42,
           }} />
         </Animated.View>
 
         {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          🌸 Peças do Mapa: {collectedPieces.length}/6
+          Peças do Mapa: {collectedPieces.length}/{mapPieces.length}
         </Text>
+
+        <View style={commonStyles.progressBar}>
+          <View 
+            style={[
+              commonStyles.progressFill, 
+              { width: `${(collectedPieces.length / mapPieces.length) * 100}%` }
+            ]} 
+          />
+        </View>
 
         {/* Map Pieces */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.accent }]}>
-          🌸 Peças das Diretrizes:
+        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 15, color: colors.text }]}>
+          Diretrizes para Coletar:
         </Text>
 
-        <View style={commonStyles.collectibleGrid}>
-          {mapPieces.map((piece) => (
+        {mapPieces.map((piece, index) => (
+          <View key={piece.id} style={{ width: '100%', alignItems: 'center', marginVertical: 8 }}>
             <TouchableOpacity
-              key={piece.id}
               style={[
-                buttonStyles.cuteButton,
+                buttonStyles.pixelButton,
                 { 
-                  backgroundColor: collectedPieces.includes(piece.id) ? piece.color : colors.grey,
-                  opacity: collectedPieces.includes(piece.id) ? 1 : 0.6,
-                  borderColor: colors.accent,
-                  width: 130,
-                  height: 70,
-                  margin: 8
+                  backgroundColor: collectedPieces.includes(piece.id) ? colors.grey : piece.color,
+                  opacity: collectedPieces.includes(piece.id) ? 0.6 : 1,
+                  width: '90%'
                 }
               ]}
               onPress={() => collectPiece(piece.id)}
               disabled={collectedPieces.includes(piece.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, textAlign: 'center' }]}>
-                {piece.name}
+              <Text style={[commonStyles.pixelText, { fontSize: 9, color: colors.darkText }]}>
+                {index + 1}. {piece.name} {collectedPieces.includes(piece.id) ? '✓' : ''}
               </Text>
             </TouchableOpacity>
-          ))}
-        </View>
+            
+            {collectedPieces.includes(piece.id) && (
+              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
+                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
+                  {piece.description}
+                </Text>
+              </View>
+            )}
+          </View>
+        ))}
 
-        {/* Show collected piece descriptions */}
-        {collectedPieces.map((pieceId) => {
-          const piece = mapPieces.find(p => p.id === pieceId);
-          return piece ? (
-            <View key={pieceId} style={[commonStyles.dialogBox, { marginVertical: 5, width: '95%', backgroundColor: piece.color }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, marginBottom: 5 }]}>
-                🌸 {piece.name} Coletado!
-              </Text>
-              <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
-                {piece.description}
+        {/* Portal Opening */}
+        {isPhaseComplete && (
+          <View style={{ alignItems: 'center', marginTop: 30 }}>
+            <View style={[commonStyles.dialogBox, { marginBottom: 15 }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+                🌟 O mapa está completo! O portal final se abriu! 🌟
               </Text>
             </View>
-          ) : null;
-        })}
-
-        {/* Complete Map Message */}
-        {isPhaseComplete && (
-          <View style={[commonStyles.dialogBox, { backgroundColor: colors.cream, marginTop: 15, marginBottom: 15 }]}>
-            <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
-              🌸 Kirby: Todas as peças foram coletadas! O modelo de diretrizes está completo e o portal final foi aberto! Agora podemos integrar IA e Gamificação de forma equilibrada! 💕
-            </Text>
-          </View>
-        )}
-
-        {/* Mission Complete */}
-        {portalOpen && (
-          <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 12 }]}>
-              🌸✨ Mapa Completo! Portal Aberto! ✨🌸
-            </Text>
+            
+            <View style={{
+              width: 120,
+              height: 120,
+              backgroundColor: colors.accent,
+              borderRadius: 60,
+              borderWidth: 3,
+              borderColor: colors.darkText,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 15
+            }}>
+              <Text style={[commonStyles.pixelText, { fontSize: 30 }]}>🌀</Text>
+              <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Portal Final</Text>
+            </View>
+            
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.primary }]}
-              onPress={nextPhase}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
+              onPress={openPortal}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                🌸 Entrar no Portal Final 🌸
+                ✨ Entrar no Portal ✨
               </Text>
             </TouchableOpacity>
           </View>
@@ -337,7 +286,7 @@ export default function Phase7() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar 🌸
+            ← Voltar
           </Text>
         </TouchableOpacity>
       </ScrollView>

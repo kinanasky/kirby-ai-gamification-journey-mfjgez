@@ -104,6 +104,7 @@ export default function Phase5() {
 
   const challengeBoss = (bossId: string) => {
     setCurrentBoss(bossId);
+    setShowBossesModal(false); // Close the modal when challenging a boss
     console.log(`Challenging boss: ${bossId}`);
   };
 
@@ -280,7 +281,7 @@ export default function Phase5() {
       <SimpleBottomSheet
         isVisible={showBossesModal}
         onClose={() => setShowBossesModal(false)}
-        keepOpen={!isBossesComplete}
+        keepOpen={false} // Allow the modal to be closed at any time
       >
         <ScrollView style={{ flex: 1 }}>
           <View style={{ alignItems: 'center' }}>
@@ -309,7 +310,7 @@ export default function Phase5() {
                       }
                     ]}
                     onPress={() => challengeBoss(boss.id)}
-                    disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
+                    disabled={defeatedBosses.includes(boss.id)}
                   >
                     <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 3, color: '#FFFFFF', lineHeight: 10 }]}>
                       {boss.name}
@@ -322,16 +323,14 @@ export default function Phase5() {
               ))}
             </View>
 
-            {isBossesComplete && (
-              <TouchableOpacity
-                style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
-                onPress={() => setShowBossesModal(false)}
-              >
-                <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
-                  🌸 Fechar 🌸
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowBossesModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </SimpleBottomSheet>

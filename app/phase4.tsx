@@ -169,11 +169,16 @@ export default function Phase4() {
           <Animated.View style={{
             position: 'absolute',
             left: 30,
-            top: 50,
-            opacity: battleAnimation
+            top: 30,
+            opacity: battleAnimation,
+            alignItems: 'center'
           }}>
-            <Text style={{ fontSize: 40 }}>👻</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+            <Image 
+              source={require('../assets/images/ce6d3b7b-68d2-4d48-9d4b-0658fd03e70b.png')}
+              style={{ width: 60, height: 60 }}
+              resizeMode="contain"
+            />
+            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5 }]}>
               Gengar (Brasil)
             </Text>
           </Animated.View>
@@ -187,11 +192,16 @@ export default function Phase4() {
           <Animated.View style={{
             position: 'absolute',
             right: 30,
-            top: 50,
-            opacity: battleAnimation
+            top: 30,
+            opacity: battleAnimation,
+            alignItems: 'center'
           }}>
-            <Text style={{ fontSize: 40 }}>🦏</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+            <Image 
+              source={require('../assets/images/8c81e7ac-07c5-41b0-a1e0-7bfd5f0c6dbf.png')}
+              style={{ width: 60, height: 60 }}
+              resizeMode="contain"
+            />
+            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5 }]}>
               Nidorino (Coreia)
             </Text>
           </Animated.View>

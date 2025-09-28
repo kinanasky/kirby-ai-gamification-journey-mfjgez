@@ -100,7 +100,7 @@ export default function Phase5() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [bossAnimation, petalAnimation, sakuraAnimation]);
 
   const challengeBoss = (bossId: string) => {
     setCurrentBoss(bossId);

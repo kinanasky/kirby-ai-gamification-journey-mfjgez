@@ -113,7 +113,7 @@ export default function Phase7() {
         useNativeDriver: true,
       })
     ).start();
-  }, [portalOpen]);
+  }, [petalAnimation, pieceAnimation, portalAnimation, sakuraAnimation]);
 
   const collectPiece = (pieceId: string) => {
     if (!collectedPieces.includes(pieceId)) {

@@ -82,7 +82,7 @@ export default function Phase2() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [petalAnimation, powerUpAnimation, sakuraAnimation]);
 
   const collectPowerUp = (powerUpId: string) => {
     if (!collectedPowerUps.includes(powerUpId)) {

@@ -78,7 +78,7 @@ export default function Phase3() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [itemAnimation, petalAnimation, sakuraAnimation]);
 
   const collectItem = (itemId: string) => {
     if (!collectedItems.includes(itemId)) {
@@ -87,7 +87,7 @@ export default function Phase3() {
     }
   };
 
-  const useTool = (toolId: string) => {
+  const handleUseTool = (toolId: string) => {
     if (!usedTools.includes(toolId)) {
       setUsedTools([...usedTools, toolId]);
       console.log(`Research tool used: ${toolId}`);
@@ -335,7 +335,7 @@ export default function Phase3() {
                     height: 70
                   }
                 ]}
-                onPress={() => useTool(tool.id)}
+                onPress={() => handleUseTool(tool.id)}
                 disabled={usedTools.includes(tool.id)}
               >
                 <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 2, color: '#FFFFFF', lineHeight: 10 }]}>

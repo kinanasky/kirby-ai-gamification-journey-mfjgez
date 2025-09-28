@@ -70,7 +70,7 @@ export default function Phase4() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [battleAnimation, petalAnimation, sakuraAnimation]);
 
   const performAttack = () => {
     if (attacks < battleData.length) {

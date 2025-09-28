@@ -150,9 +150,9 @@ export default function MainScreen() {
           ]}
         />
 
-        {/* Title */}
+        {/* Title - Changed to Ana's DreamLand */}
         <Text style={[commonStyles.title, { fontSize: 16, marginBottom: 10 }]}>
-          🌸 Sakura Dream Land 🌸
+          🌸 Ana's DreamLand 🌸
         </Text>
         <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 30, color: colors.text }]}>
           A Jornada da IA e Gamificação Brasil–Coreia
@@ -217,12 +217,12 @@ export default function MainScreen() {
           }} />
         </Animated.View>
 
-        {/* Dialog Box */}
-        <View style={commonStyles.dialogBox}>
-          <Text style={[commonStyles.pixelText, { marginBottom: 12, fontSize: 9 }]}>
+        {/* Dialog Box - Fixed text alignment */}
+        <View style={[commonStyles.dialogBox, { alignItems: 'center', justifyContent: 'center' }]}>
+          <Text style={[commonStyles.pixelText, { marginBottom: 12, fontSize: 9, textAlign: 'center' }]}>
             🌸 Olá, aventureiro(a)! Bem-vindo ao mundo da pesquisa sobre Inteligência Artificial e Gamificação na Educação.
           </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 9 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 9, textAlign: 'center' }]}>
             Vamos desbloquear juntos o próximo nível? ✨
           </Text>
         </View>
@@ -231,20 +231,20 @@ export default function MainScreen() {
         <View style={{ width: '100%', alignItems: 'center', marginTop: 30 }}>
           {/* Start Adventure Button */}
           <TouchableOpacity
-            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.primary }]}
+            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }]}
             onPress={handleStartAdventure}
           >
-            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10 }]}>
+            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10, textAlign: 'center' }]}>
               🌸 Iniciar Aventura 🌸
             </Text>
           </TouchableOpacity>
 
           {/* Guide Button (Separated) */}
           <TouchableOpacity
-            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.accent }]}
+            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }]}
             onPress={handleGuide}
           >
-            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10 }]}>
+            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10, textAlign: 'center' }]}>
               📚 Guia de IA e Gamificação 📚
             </Text>
           </TouchableOpacity>
@@ -262,18 +262,28 @@ export default function MainScreen() {
         {/* Cute graphic elements using provided images */}
         <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
           <Image 
-            source={require('../assets/images/a0ec4a2b-45d2-467b-b1a1-dd085aff862a.jpeg')}
+            source={require('../assets/images/b0462bac-ce40-4426-85e7-7441474a9766.jpeg')}
             style={{ width: 30, height: 30, borderRadius: 15 }}
             resizeMode="cover"
           />
           <Image 
-            source={require('../assets/images/fe75fb18-a9af-410c-b9c0-ddf8ba28fcf0.jpeg')}
+            source={require('../assets/images/745c21d8-d092-4f93-99c1-c2cc531fb239.jpeg')}
             style={{ width: 25, height: 25, borderRadius: 12 }}
             resizeMode="cover"
           />
           <Image 
-            source={require('../assets/images/03cb0ecf-6fb7-48d8-b0c2-361fe3375bff.jpeg')}
+            source={require('../assets/images/0c5e2954-df29-4cc6-955a-81207bc59f0a.jpeg')}
             style={{ width: 28, height: 28, borderRadius: 14 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/2595260a-77d5-4793-835a-1e1dce880580.jpeg')}
+            style={{ width: 26, height: 26, borderRadius: 13 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/5e8a3f35-ca6c-4275-9669-7ed177ebb68d.jpeg')}
+            style={{ width: 24, height: 24, borderRadius: 12 }}
             resizeMode="cover"
           />
         </View>

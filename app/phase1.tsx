@@ -18,13 +18,13 @@ export default function Phase1() {
     PressStart2P_400Regular,
   });
 
-  // Stars positioned in the center with smaller squares
+  // Stars positioned horizontally as requested
   const stars = [
-    { id: 'tech', name: '⭐ Tecnologia', position: { top: 80, alignSelf: 'center' } },
-    { id: 'brasil', name: '⭐ Brasil', position: { top: 120, alignSelf: 'center' } },
-    { id: 'coreia', name: '⭐ Coreia', position: { top: 160, alignSelf: 'center' } },
-    { id: 'ia', name: '⭐ IA', position: { top: 200, alignSelf: 'center' } },
-    { id: 'gamificacao', name: '⭐ Gamificação', position: { top: 240, alignSelf: 'center' } }
+    { id: 'tech', name: '⭐ Tecnologia' },
+    { id: 'brasil', name: '⭐ Brasil' },
+    { id: 'coreia', name: '⭐ Coreia' },
+    { id: 'ia', name: '⭐ IA' },
+    { id: 'gamificacao', name: '⭐ Gamificação' }
   ];
 
   const messages = [
@@ -153,8 +153,8 @@ export default function Phase1() {
 
         {/* Library Background - Smaller square as requested */}
         <View style={{
-          width: 250,
-          height: 300,
+          width: 280,
+          height: 200,
           backgroundColor: colors.cream,
           borderWidth: 3,
           borderColor: colors.primary,
@@ -162,10 +162,12 @@ export default function Phase1() {
           marginBottom: 20,
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'relative'
+          position: 'relative',
+          paddingHorizontal: 15,
+          paddingVertical: 20
         }}>
           <Text style={[commonStyles.pixelText, { fontSize: 25, marginBottom: 10 }]}>📚</Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 15 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 15, textAlign: 'center' }]}>
             Biblioteca do Conhecimento
           </Text>
           
@@ -198,14 +200,22 @@ export default function Phase1() {
             bottom: 25,
           }} />
 
-          {/* Stars aligned in the center */}
-          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          {/* Stars aligned horizontally as requested */}
+          <View style={{ 
+            flexDirection: 'row', 
+            flexWrap: 'wrap',
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            marginTop: 10,
+            paddingHorizontal: 10
+          }}>
             {stars.map((star, index) => (
               <Animated.View
                 key={star.id}
                 style={[
                   {
-                    marginVertical: 8,
+                    marginHorizontal: 4,
+                    marginVertical: 4,
                     opacity: collectedStars.includes(star.id) ? 0.3 : starAnimation,
                   }
                 ]}
@@ -215,14 +225,14 @@ export default function Phase1() {
                     buttonStyles.starButton,
                     { 
                       backgroundColor: collectedStars.includes(star.id) ? colors.grey : colors.accent,
-                      width: 25,
-                      height: 25
+                      width: 30,
+                      height: 30
                     }
                   ]}
                   onPress={() => collectStar(star.id)}
                   disabled={collectedStars.includes(star.id)}
                 >
-                  <Text style={[commonStyles.pixelText, { fontSize: 10 }]}>⭐</Text>
+                  <Text style={[commonStyles.pixelText, { fontSize: 12 }]}>⭐</Text>
                 </TouchableOpacity>
               </Animated.View>
             ))}
@@ -261,23 +271,23 @@ export default function Phase1() {
         </Animated.View>
 
         {/* Progress */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
+        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text, textAlign: 'center' }]}>
           🌸 Estrelas coletadas: {collectedStars.length}/5 🌸
         </Text>
 
-        {/* Current Message */}
-        <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
-          <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+        {/* Current Message - Fixed text alignment */}
+        <View style={[commonStyles.dialogBox, { marginBottom: 20, alignItems: 'center', justifyContent: 'center' }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 8, textAlign: 'center' }]}>
             {messages[currentMessage]}
           </Text>
         </View>
 
-        {/* Mission Description */}
-        <View style={[commonStyles.card, { backgroundColor: colors.rose, marginBottom: 20 }]}>
-          <Text style={[commonStyles.pixelText, { fontSize: 9, marginBottom: 10, color: colors.darkText }]}>
+        {/* Mission Description - Fixed text alignment */}
+        <View style={[commonStyles.card, { backgroundColor: colors.rose, marginBottom: 20, alignItems: 'center', justifyContent: 'center' }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 9, marginBottom: 10, color: colors.darkText, textAlign: 'center' }]}>
             🎯 Missão: Coletar 5 estrelas de conhecimento
           </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, textAlign: 'center' }]}>
             Toque nas estrelas para descobrir os fundamentos da pesquisa! ✨
           </Text>
         </View>
@@ -285,15 +295,15 @@ export default function Phase1() {
         {/* Phase Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10, textAlign: 'center' }]}>
               🎉 Fase 1 Completa! 🌸
             </Text>
             
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }]}
               onPress={nextPhase}
             >
-              <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, textAlign: 'center' }]}>
                 🌸 Próxima Fase 🌸
               </Text>
             </TouchableOpacity>
@@ -302,15 +312,15 @@ export default function Phase1() {
 
         {/* Back Button */}
         <TouchableOpacity
-          style={[buttonStyles.pixelButton, { backgroundColor: colors.grey, marginTop: 20 }]}
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.grey, marginTop: 20, alignItems: 'center', justifyContent: 'center' }]}
           onPress={() => router.back()}
         >
-          <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
+          <Text style={[commonStyles.pixelText, { color: colors.darkText, textAlign: 'center' }]}>
             🌸 Voltar
           </Text>
         </TouchableOpacity>
 
-        {/* Cute decorative elements with provided images */}
+        {/* Cute decorative elements */}
         <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
           <Text style={{ fontSize: 15 }}>🌸</Text>
           <Text style={{ fontSize: 12 }}>✨</Text>
@@ -319,16 +329,31 @@ export default function Phase1() {
           <Text style={{ fontSize: 15 }}>🌸</Text>
         </View>
 
-        {/* Cute graphic elements */}
+        {/* Cute graphic elements using provided images */}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
           <Image 
-            source={require('../assets/images/5d6b783c-4a9b-49d2-b0e6-8300d8d48aab.jpeg')}
+            source={require('../assets/images/b0462bac-ce40-4426-85e7-7441474a9766.jpeg')}
             style={{ width: 20, height: 20, borderRadius: 10 }}
             resizeMode="cover"
           />
           <Image 
-            source={require('../assets/images/a982b36c-80bc-44c0-a026-35c6227ea0f0.jpeg')}
+            source={require('../assets/images/745c21d8-d092-4f93-99c1-c2cc531fb239.jpeg')}
             style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/0c5e2954-df29-4cc6-955a-81207bc59f0a.jpeg')}
+            style={{ width: 22, height: 22, borderRadius: 11 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/2595260a-77d5-4793-835a-1e1dce880580.jpeg')}
+            style={{ width: 19, height: 19, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/5e8a3f35-ca6c-4275-9669-7ed177ebb68d.jpeg')}
+            style={{ width: 21, height: 21, borderRadius: 11 }}
             resizeMode="cover"
           />
         </View>

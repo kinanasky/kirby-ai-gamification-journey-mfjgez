@@ -90,6 +90,7 @@ export default function Phase6() {
 
   const challengeBoss = (bossId: string) => {
     setCurrentBoss(bossId);
+    setShowGlobalBossesModal(false); // Close the modal when challenging a boss, just like Phase 5
     console.log(`Challenging global boss: ${bossId}`);
   };
 
@@ -252,15 +253,15 @@ export default function Phase6() {
           <Text style={{ fontSize: 15 }}>🌸</Text>
         </View>
 
-        {/* Cute graphic elements */}
+        {/* Cute graphic elements - Fixed image order to match Phase 5 pattern */}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
           <Image 
-            source={require('../assets/images/5d6b783c-4a9b-49d2-b0e6-8300d8d48aab.jpeg')}
+            source={require('../assets/images/a0ec4a2b-45d2-467b-b1a1-dd085aff862a.jpeg')}
             style={{ width: 20, height: 20, borderRadius: 10 }}
             resizeMode="cover"
           />
           <Image 
-            source={require('../assets/images/a982b36c-80bc-44c0-a026-35c6227ea0f0.jpeg')}
+            source={require('../assets/images/03cb0ecf-6fb7-48d8-b0c2-361fe3375bff.jpeg')}
             style={{ width: 18, height: 18, borderRadius: 9 }}
             resizeMode="cover"
           />
@@ -271,10 +272,10 @@ export default function Phase6() {
       <SimpleBottomSheet
         isVisible={showGlobalBossesModal}
         onClose={() => setShowGlobalBossesModal(false)}
-        keepOpen={!isGlobalBossesComplete}
+        keepOpen={false} // Allow the modal to be closed at any time, just like Phase 5
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 14 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Chefes Globais 🌸
           </Text>
           
@@ -312,16 +313,14 @@ export default function Phase6() {
             ))}
           </View>
 
-          {isGlobalBossesComplete && (
-            <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
-              onPress={() => setShowGlobalBossesModal(false)}
-            >
-              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
-                🌸 Fechar 🌸
-              </Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+            onPress={() => setShowGlobalBossesModal(false)}
+          >
+            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+              🌸 Fechar 🌸
+            </Text>
+          </TouchableOpacity>
         </View>
       </SimpleBottomSheet>
     </SafeAreaView>

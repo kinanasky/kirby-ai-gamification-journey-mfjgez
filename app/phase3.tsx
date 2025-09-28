@@ -176,6 +176,38 @@ export default function Phase3() {
           </Text>
         </View>
 
+        {/* Visible NPCs in the main area */}
+        <View style={{ width: '100%', marginBottom: 20 }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text, textAlign: 'center' }]}>
+            🌸 NPCs no Laboratório 🌸
+          </Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {npcs.map((npc) => (
+              <TouchableOpacity
+                key={npc.id}
+                style={[
+                  buttonStyles.pixelButton,
+                  { 
+                    backgroundColor: talkedToNPCs.includes(npc.id) ? colors.grey : colors.green,
+                    margin: 5,
+                    width: 90,
+                    height: 60
+                  }
+                ]}
+                onPress={() => talkToNPC(npc.id)}
+                disabled={talkedToNPCs.includes(npc.id)}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 2, color: colors.darkText }]}>
+                  {npc.name}
+                </Text>
+                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
+                  {npc.criteria}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
         {/* Items Section Button */}
         <TouchableOpacity
           style={[buttonStyles.pixelButton, { backgroundColor: colors.purple, marginBottom: 15, width: 200 }]}

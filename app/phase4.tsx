@@ -169,7 +169,7 @@ export default function Phase4() {
           <Animated.View style={{
             position: 'absolute',
             left: 30,
-            top: 30,
+            top: 20,
             opacity: battleAnimation,
             alignItems: 'center'
           }}>
@@ -178,8 +178,8 @@ export default function Phase4() {
               style={{ width: 60, height: 60 }}
               resizeMode="contain"
             />
-            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5 }]}>
-              Gengar (Brasil)
+            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5, textAlign: 'center' }]}>
+              Brasil
             </Text>
           </Animated.View>
 
@@ -192,7 +192,7 @@ export default function Phase4() {
           <Animated.View style={{
             position: 'absolute',
             right: 30,
-            top: 30,
+            top: 20,
             opacity: battleAnimation,
             alignItems: 'center'
           }}>
@@ -201,8 +201,8 @@ export default function Phase4() {
               style={{ width: 60, height: 60 }}
               resizeMode="contain"
             />
-            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5 }]}>
-              Nidorino (Coreia)
+            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5, textAlign: 'center' }]}>
+              Coreia
             </Text>
           </Animated.View>
         </View>

@@ -12,6 +12,8 @@ export default function Phase6() {
   const [defeatedBosses, setDefeatedBosses] = useState<string[]>([]);
   const [currentBoss, setCurrentBoss] = useState<string | null>(null);
   const [showNPCDialogs, setShowNPCDialogs] = useState(false);
+  const [selectedNPC, setSelectedNPC] = useState<string | null>(null);
+  const [showNPCModal, setShowNPCModal] = useState(false);
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [bossAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
@@ -40,9 +42,24 @@ export default function Phase6() {
   ];
 
   const npcDialogs = [
-    { name: 'Leon', message: '"A IA pode monitorar emoções dos estudantes!"' },
-    { name: 'Chen', message: '"Ela age de forma preventiva para ajudar!"' },
-    { name: 'Kim & Kim', message: '"Mas precisamos de transparência e formação contínua!"' }
+    { 
+      id: 'leon',
+      name: 'Leon', 
+      message: '"A IA pode monitorar emoções dos estudantes!"',
+      fullDialog: 'Leon explica como a inteligência artificial pode detectar sinais de frustração, ansiedade ou desengajamento nos estudantes através de análise facial, padrões de clique e tempo de resposta. Isso permite intervenções pedagógicas mais precisas e personalizadas.'
+    },
+    { 
+      id: 'chen',
+      name: 'Chen', 
+      message: '"Ela age de forma preventiva para ajudar!"',
+      fullDialog: 'Chen detalha como sistemas de IA podem identificar estudantes em risco de evasão ou com dificuldades de aprendizagem antes que os problemas se agravem. Algoritmos preditivos analisam dados comportamentais e acadêmicos para sugerir intervenções precoces.'
+    },
+    { 
+      id: 'kim',
+      name: 'Kim & Kim', 
+      message: '"Mas precisamos de transparência e formação contínua!"',
+      fullDialog: 'Kim & Kim enfatizam a importância da transparência nos algoritmos educacionais e da formação contínua de professores. É essencial que educadores compreendam como a IA funciona e que os estudantes saibam como seus dados são utilizados para manter a confiança no sistema.'
+    }
   ];
 
   useEffect(() => {
@@ -106,6 +123,12 @@ export default function Phase6() {
     }
   };
 
+  const openNPCDialog = (npcId: string) => {
+    setSelectedNPC(npcId);
+    setShowNPCModal(true);
+    console.log(`Opening dialog for NPC: ${npcId}`);
+  };
+
   const nextPhase = () => {
     console.log('Moving to Phase 7');
     router.push('/phase7');
@@ -119,6 +142,7 @@ export default function Phase6() {
   }
 
   const currentBossData = currentBoss ? globalBosses.find(b => b.id === currentBoss) : null;
+  const selectedNPCData = selectedNPC ? npcDialogs.find(n => n.id === selectedNPC) : null;
 
   return (
     <SafeAreaView style={commonStyles.phaseContainer}>
@@ -197,21 +221,28 @@ export default function Phase6() {
           </Text>
         </TouchableOpacity>
 
-        {/* NPC Dialogs */}
+        {/* Interactive NPCs */}
         {showNPCDialogs && (
           <View style={{ width: '100%', marginBottom: 20 }}>
             <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text, textAlign: 'center' }]}>
               🌸 Ao vencer, NPCs falam: 🌸
             </Text>
             {npcDialogs.map((npc, index) => (
-              <View key={index} style={[commonStyles.card, { backgroundColor: colors.mint, marginVertical: 5 }]}>
+              <TouchableOpacity
+                key={index}
+                style={[commonStyles.card, { backgroundColor: colors.mint, marginVertical: 5 }]}
+                onPress={() => openNPCDialog(npc.id)}
+              >
                 <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 5, color: colors.darkText }]}>
                   {npc.name}:
                 </Text>
                 <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.text }]}>
                   {npc.message}
                 </Text>
-              </View>
+                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.accent, marginTop: 5 }]}>
+                  👆 Toque para ler mais
+                </Text>
+              </TouchableOpacity>
             ))}
           </View>
         )}
@@ -321,6 +352,36 @@ export default function Phase6() {
               🌸 Fechar 🌸
             </Text>
           </TouchableOpacity>
+        </View>
+      </SimpleBottomSheet>
+
+      {/* NPC Dialog Modal */}
+      <SimpleBottomSheet
+        isVisible={showNPCModal}
+        onClose={() => setShowNPCModal(false)}
+        keepOpen={false}
+      >
+        <View style={{ alignItems: 'center' }}>
+          {selectedNPCData && (
+            <>
+              <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 15, color: '#FFFFFF', lineHeight: 16 }]}>
+                🌸 {selectedNPCData.name} 🌸
+              </Text>
+              
+              <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 20, color: '#FFFFFF', lineHeight: 12, textAlign: 'center' }]}>
+                {selectedNPCData.fullDialog}
+              </Text>
+              
+              <TouchableOpacity
+                style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
+                onPress={() => setShowNPCModal(false)}
+              >
+                <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                  🌸 Fechar 🌸
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </SimpleBottomSheet>
     </SafeAreaView>

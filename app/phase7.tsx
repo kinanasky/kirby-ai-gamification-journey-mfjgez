@@ -132,6 +132,8 @@ export default function Phase7() {
     router.push('/final');
   };
 
+  const isMapComplete = collectedPieces.length === 6;
+
   if (!fontsLoaded) {
     return null;
   }
@@ -289,10 +291,11 @@ export default function Phase7() {
       <SimpleBottomSheet
         isVisible={showMapModal}
         onClose={() => setShowMapModal(false)}
+        keepOpen={!isMapComplete}
       >
         <ScrollView style={{ flex: 1 }}>
           <View style={{ alignItems: 'center' }}>
-            <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
               🌸 Peças do Mapa 🌸
             </Text>
             
@@ -316,22 +319,30 @@ export default function Phase7() {
                         height: 100
                       }
                     ]}
-                    onPress={() => {
-                      collectPiece(piece.id);
-                      setShowMapModal(false);
-                    }}
+                    onPress={() => collectPiece(piece.id)}
                     disabled={collectedPieces.includes(piece.id)}
                   >
-                    <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 3, color: colors.darkText }]}>
+                    <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 3, color: '#FFFFFF', lineHeight: 9 }]}>
                       {piece.name}
                     </Text>
-                    <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                    <Text style={[commonStyles.pixelText, { fontSize: 6, color: '#FFFFFF', lineHeight: 8 }]}>
                       {piece.description}
                     </Text>
                   </TouchableOpacity>
                 </Animated.View>
               ))}
             </View>
+
+            {isMapComplete && (
+              <TouchableOpacity
+                style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+                onPress={() => setShowMapModal(false)}
+              >
+                <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                  🌸 Fechar 🌸
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ScrollView>
       </SimpleBottomSheet>

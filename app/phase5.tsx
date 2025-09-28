@@ -121,6 +121,7 @@ export default function Phase5() {
   };
 
   const isPhaseComplete = defeatedBosses.length === 6;
+  const isBossesComplete = defeatedBosses.length === 6;
 
   if (!fontsLoaded) {
     return null;
@@ -279,10 +280,11 @@ export default function Phase5() {
       <SimpleBottomSheet
         isVisible={showBossesModal}
         onClose={() => setShowBossesModal(false)}
+        keepOpen={!isBossesComplete}
       >
         <ScrollView style={{ flex: 1 }}>
           <View style={{ alignItems: 'center' }}>
-            <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
               🌸 Chefes da Dungeon 🌸
             </Text>
             
@@ -306,22 +308,30 @@ export default function Phase5() {
                         height: 90
                       }
                     ]}
-                    onPress={() => {
-                      challengeBoss(boss.id);
-                      setShowBossesModal(false);
-                    }}
+                    onPress={() => challengeBoss(boss.id)}
                     disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
                   >
-                    <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 3, color: colors.darkText }]}>
+                    <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 3, color: '#FFFFFF', lineHeight: 10 }]}>
                       {boss.name}
                     </Text>
-                    <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                    <Text style={[commonStyles.pixelText, { fontSize: 6, color: '#FFFFFF', lineHeight: 8 }]}>
                       {boss.description}
                     </Text>
                   </TouchableOpacity>
                 </Animated.View>
               ))}
             </View>
+
+            {isBossesComplete && (
+              <TouchableOpacity
+                style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+                onPress={() => setShowBossesModal(false)}
+              >
+                <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                  🌸 Fechar 🌸
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </ScrollView>
       </SimpleBottomSheet>

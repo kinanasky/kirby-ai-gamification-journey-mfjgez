@@ -100,6 +100,8 @@ export default function Phase3() {
   };
 
   const isPhaseComplete = collectedItems.length === 5 && talkedToNPCs.length === 5;
+  const isItemsComplete = collectedItems.length === 5;
+  const isTerminalsComplete = talkedToNPCs.length === 5;
 
   if (!fontsLoaded) {
     return null;
@@ -255,9 +257,10 @@ export default function Phase3() {
       <SimpleBottomSheet
         isVisible={showItemsModal}
         onClose={() => setShowItemsModal(false)}
+        keepOpen={!isItemsComplete}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Itens Coletáveis 🌸
           </Text>
           
@@ -281,22 +284,30 @@ export default function Phase3() {
                       height: 80
                     }
                   ]}
-                  onPress={() => {
-                    collectItem(item.id);
-                    setShowItemsModal(false);
-                  }}
+                  onPress={() => collectItem(item.id)}
                   disabled={collectedItems.includes(item.id)}
                 >
-                  <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 3 }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 3, color: '#FFFFFF', lineHeight: 12 }]}>
                     {item.name}
                   </Text>
-                  <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 6, color: '#FFFFFF', lineHeight: 8 }]}>
                     {item.description}
                   </Text>
                 </TouchableOpacity>
               </Animated.View>
             ))}
           </View>
+
+          {isItemsComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowItemsModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SimpleBottomSheet>
 
@@ -304,9 +315,10 @@ export default function Phase3() {
       <SimpleBottomSheet
         isVisible={showTerminalsModal}
         onClose={() => setShowTerminalsModal(false)}
+        keepOpen={!isTerminalsComplete}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Terminais de Pesquisa 🌸
           </Text>
           
@@ -323,21 +335,29 @@ export default function Phase3() {
                     height: 70
                   }
                 ]}
-                onPress={() => {
-                  talkToNPC(npc.id);
-                  setShowTerminalsModal(false);
-                }}
+                onPress={() => talkToNPC(npc.id)}
                 disabled={talkedToNPCs.includes(npc.id)}
               >
-                <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 2, color: colors.darkText }]}>
+                <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 2, color: '#FFFFFF', lineHeight: 10 }]}>
                   {npc.name}
                 </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                <Text style={[commonStyles.pixelText, { fontSize: 6, color: '#FFFFFF', lineHeight: 8 }]}>
                   {npc.criteria}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
+
+          {isTerminalsComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowTerminalsModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SimpleBottomSheet>
     </SafeAreaView>

@@ -107,6 +107,8 @@ export default function Phase2() {
   };
 
   const isPhaseComplete = collectedPowerUps.length === 2 && defeatedEnemies.length === 3;
+  const isPowerUpsComplete = collectedPowerUps.length === 2;
+  const isEnemiesComplete = defeatedEnemies.length === 3;
 
   if (!fontsLoaded) {
     return null;
@@ -262,9 +264,10 @@ export default function Phase2() {
       <SimpleBottomSheet
         isVisible={showPowerUpsModal}
         onClose={() => setShowPowerUpsModal(false)}
+        keepOpen={!isPowerUpsComplete}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Power-ups Coletáveis 🌸
           </Text>
           
@@ -287,22 +290,30 @@ export default function Phase2() {
                       height: 80
                     }
                   ]}
-                  onPress={() => {
-                    collectPowerUp(powerUp.id);
-                    setShowPowerUpsModal(false);
-                  }}
+                  onPress={() => collectPowerUp(powerUp.id)}
                   disabled={collectedPowerUps.includes(powerUp.id)}
                 >
-                  <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 5 }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 5, color: '#FFFFFF', lineHeight: 14 }]}>
                     {powerUp.name}
                   </Text>
-                  <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 8, color: '#FFFFFF', lineHeight: 10 }]}>
                     {powerUp.description}
                   </Text>
                 </TouchableOpacity>
               </Animated.View>
             ))}
           </View>
+
+          {isPowerUpsComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowPowerUpsModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SimpleBottomSheet>
 
@@ -310,9 +321,10 @@ export default function Phase2() {
       <SimpleBottomSheet
         isVisible={showEnemiesModal}
         onClose={() => setShowEnemiesModal(false)}
+        keepOpen={!isEnemiesComplete}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Inimigos: Livros Voadores 🌸
           </Text>
           
@@ -329,18 +341,26 @@ export default function Phase2() {
                     height: 60
                   }
                 ]}
-                onPress={() => {
-                  defeatEnemy(enemy.id);
-                  setShowEnemiesModal(false);
-                }}
+                onPress={() => defeatEnemy(enemy.id)}
                 disabled={defeatedEnemies.includes(enemy.id)}
               >
-                <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                <Text style={[commonStyles.pixelText, { fontSize: 8, color: '#FFFFFF', lineHeight: 10 }]}>
                   {enemy.name}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
+
+          {isEnemiesComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowEnemiesModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SimpleBottomSheet>
     </SafeAreaView>

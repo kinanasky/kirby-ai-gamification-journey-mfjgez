@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -16,6 +17,7 @@ interface SimpleBottomSheetProps {
   children?: React.ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
+  keepOpen?: boolean; // New prop to control if modal should stay open
 }
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -30,7 +32,8 @@ const SNAP_POINTS = {
 const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
   children,
   isVisible = false,
-  onClose
+  onClose,
+  keepOpen = false
 }) => {
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const gestureTranslateY = useRef(new Animated.Value(0)).current;
@@ -74,7 +77,10 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
   }, [isVisible, translateY, backdropOpacity]);
 
   const handleBackdropPress = () => {
-    onClose?.();
+    // Only allow closing if keepOpen is false
+    if (!keepOpen) {
+      onClose?.();
+    }
   };
 
   const snapToPoint = (point: number) => {
@@ -91,7 +97,7 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
   const getClosestSnapPoint = (currentY: number, velocityY: number) => {
     const currentPosition = SCREEN_HEIGHT - currentY;
 
-    if (velocityY > 1000) return SNAP_POINTS.CLOSED;
+    if (velocityY > 1000) return keepOpen ? SNAP_POINTS.HALF : SNAP_POINTS.CLOSED;
     if (velocityY < -1000) return SNAP_POINTS.FULL;
 
     const distances = [
@@ -99,7 +105,7 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
       { point: SNAP_POINTS.FULL, distance: Math.abs(currentPosition - SNAP_POINTS.FULL) },
     ];
 
-    if (currentPosition < SNAP_POINTS.HALF * 0.5) {
+    if (currentPosition < SNAP_POINTS.HALF * 0.5 && !keepOpen) {
       return SNAP_POINTS.CLOSED;
     }
 
@@ -116,7 +122,7 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
     const intendedPosition = currentBasePosition + translationY;
 
     const minPosition = SCREEN_HEIGHT - SNAP_POINTS.FULL;
-    const maxPosition = SCREEN_HEIGHT;
+    const maxPosition = keepOpen ? SCREEN_HEIGHT - SNAP_POINTS.HALF + 50 : SCREEN_HEIGHT;
 
     const clampedPosition = Math.max(minPosition, Math.min(maxPosition, intendedPosition));
     const clampedTranslation = clampedPosition - currentBasePosition;
@@ -135,14 +141,14 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
       const intendedPosition = currentBasePosition + translationY;
 
       const minPosition = SCREEN_HEIGHT - SNAP_POINTS.FULL;
-      const maxPosition = SCREEN_HEIGHT;
+      const maxPosition = keepOpen ? SCREEN_HEIGHT - SNAP_POINTS.HALF + 50 : SCREEN_HEIGHT;
 
       const finalY = Math.max(minPosition, Math.min(maxPosition, intendedPosition));
       const targetSnapPoint = getClosestSnapPoint(finalY, velocityY);
 
       gestureTranslateY.setValue(0);
 
-      if (targetSnapPoint === SNAP_POINTS.CLOSED) {
+      if (targetSnapPoint === SNAP_POINTS.CLOSED && !keepOpen) {
         onClose?.();
       } else {
         snapToPoint(targetSnapPoint);

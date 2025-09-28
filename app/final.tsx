@@ -127,6 +127,8 @@ export default function FinalPhase() {
   };
 
   const isPhaseComplete = collectedGoldStars.length === 5 && collectedSilverStars.length === 5;
+  const isGoldStarsComplete = collectedGoldStars.length === 5;
+  const isSilverStarsComplete = collectedSilverStars.length === 5;
 
   if (!fontsLoaded) {
     return null;
@@ -434,9 +436,10 @@ export default function FinalPhase() {
       <SimpleBottomSheet
         isVisible={showGoldStarsModal}
         onClose={() => setShowGoldStarsModal(false)}
+        keepOpen={!isGoldStarsComplete}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Estrelas Douradas (Limitações) 🌸
           </Text>
           
@@ -460,19 +463,27 @@ export default function FinalPhase() {
                       height: 70
                     }
                   ]}
-                  onPress={() => {
-                    collectGoldStar(star.id);
-                    setShowGoldStarsModal(false);
-                  }}
+                  onPress={() => collectGoldStar(star.id)}
                   disabled={collectedGoldStars.includes(star.id)}
                 >
-                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: '#FFFFFF', lineHeight: 9 }]}>
                     {star.name}
                   </Text>
                 </TouchableOpacity>
               </Animated.View>
             ))}
           </View>
+
+          {isGoldStarsComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowGoldStarsModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SimpleBottomSheet>
 
@@ -480,9 +491,10 @@ export default function FinalPhase() {
       <SimpleBottomSheet
         isVisible={showSilverStarsModal}
         onClose={() => setShowSilverStarsModal(false)}
+        keepOpen={!isSilverStarsComplete}
       >
         <View style={{ alignItems: 'center' }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
             🌸 Estrelas Prateadas (Futuro) 🌸
           </Text>
           
@@ -506,19 +518,27 @@ export default function FinalPhase() {
                       height: 70
                     }
                   ]}
-                  onPress={() => {
-                    collectSilverStar(star.id);
-                    setShowSilverStarsModal(false);
-                  }}
+                  onPress={() => collectSilverStar(star.id)}
                   disabled={collectedSilverStars.includes(star.id)}
                 >
-                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: '#FFFFFF', lineHeight: 9 }]}>
                     {star.name}
                   </Text>
                 </TouchableOpacity>
               </Animated.View>
             ))}
           </View>
+
+          {isSilverStarsComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowSilverStarsModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SimpleBottomSheet>
     </SafeAreaView>

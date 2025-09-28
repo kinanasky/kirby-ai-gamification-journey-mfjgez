@@ -5,6 +5,7 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useRouter } from 'expo-router';
+import SimpleBottomSheet from '../components/BottomSheet';
 
 export default function Phase7() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function Phase7() {
   const [pieceAnimation] = useState(new Animated.Value(0));
   const [portalAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
+  const [showMapModal, setShowMapModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -203,44 +205,15 @@ export default function Phase7() {
           </Text>
         </View>
 
-        {/* Map Pieces */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Peças do Mapa: {collectedPieces.length}/6 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {mapPieces.map((piece) => (
-            <Animated.View
-              key={piece.id}
-              style={[
-                {
-                  opacity: collectedPieces.includes(piece.id) ? 0.3 : pieceAnimation,
-                  margin: 5
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.pixelButton,
-                  { 
-                    backgroundColor: collectedPieces.includes(piece.id) ? colors.grey : colors.accent,
-                    width: 110,
-                    height: 80
-                  }
-                ]}
-                onPress={() => collectPiece(piece.id)}
-                disabled={collectedPieces.includes(piece.id)}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 3, color: colors.darkText }]}>
-                  {piece.name}
-                </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
-                  {piece.description}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Map Pieces Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginBottom: 20, width: 200 }]}
+          onPress={() => setShowMapModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Peças do Mapa: {collectedPieces.length}/6 🌸
+          </Text>
+        </TouchableOpacity>
 
         {/* Portal */}
         {portalOpen && (
@@ -311,6 +284,57 @@ export default function Phase7() {
           />
         </View>
       </ScrollView>
+
+      {/* Map Pieces Modal */}
+      <SimpleBottomSheet
+        isVisible={showMapModal}
+        onClose={() => setShowMapModal(false)}
+      >
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+              🌸 Peças do Mapa 🌸
+            </Text>
+            
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+              {mapPieces.map((piece) => (
+                <Animated.View
+                  key={piece.id}
+                  style={[
+                    {
+                      opacity: collectedPieces.includes(piece.id) ? 0.3 : pieceAnimation,
+                      margin: 5
+                    }
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={[
+                      buttonStyles.pixelButton,
+                      { 
+                        backgroundColor: collectedPieces.includes(piece.id) ? colors.grey : colors.accent,
+                        width: 140,
+                        height: 100
+                      }
+                    ]}
+                    onPress={() => {
+                      collectPiece(piece.id);
+                      setShowMapModal(false);
+                    }}
+                    disabled={collectedPieces.includes(piece.id)}
+                  >
+                    <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 3, color: colors.darkText }]}>
+                      {piece.name}
+                    </Text>
+                    <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                      {piece.description}
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      </SimpleBottomSheet>
     </SafeAreaView>
   );
 }

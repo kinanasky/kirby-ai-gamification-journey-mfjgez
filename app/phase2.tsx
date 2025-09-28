@@ -5,6 +5,7 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useRouter } from 'expo-router';
+import SimpleBottomSheet from '../components/BottomSheet';
 
 export default function Phase2() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function Phase2() {
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [powerUpAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
+  const [showPowerUpsModal, setShowPowerUpsModal] = useState(false);
+  const [showEnemiesModal, setShowEnemiesModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -178,71 +181,25 @@ export default function Phase2() {
           </Text>
         </View>
 
-        {/* Power-ups Section */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Power-ups Coletáveis 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginBottom: 20 }}>
-          {powerUps.map((powerUp) => (
-            <Animated.View
-              key={powerUp.id}
-              style={[
-                {
-                  opacity: collectedPowerUps.includes(powerUp.id) ? 0.3 : powerUpAnimation,
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.powerUpButton,
-                  { 
-                    backgroundColor: collectedPowerUps.includes(powerUp.id) ? colors.grey : colors.blue,
-                    width: 80,
-                    height: 60
-                  }
-                ]}
-                onPress={() => collectPowerUp(powerUp.id)}
-                disabled={collectedPowerUps.includes(powerUp.id)}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 5 }]}>
-                  {powerUp.name}
-                </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
-                  {powerUp.description}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Power-ups Section Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.blue, marginBottom: 15, width: 200 }]}
+          onPress={() => setShowPowerUpsModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Power-ups Coletáveis 🌸
+          </Text>
+        </TouchableOpacity>
 
-        {/* Enemies Section */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Inimigos: Livros Voadores 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {enemies.map((enemy) => (
-            <TouchableOpacity
-              key={enemy.id}
-              style={[
-                buttonStyles.pixelButton,
-                { 
-                  backgroundColor: defeatedEnemies.includes(enemy.id) ? colors.grey : colors.red,
-                  margin: 5,
-                  width: 80,
-                  height: 50
-                }
-              ]}
-              onPress={() => defeatEnemy(enemy.id)}
-              disabled={defeatedEnemies.includes(enemy.id)}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
-                {enemy.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* Enemies Section Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.red, marginBottom: 20, width: 200 }]}
+          onPress={() => setShowEnemiesModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Inimigos: Livros Voadores 🌸
+          </Text>
+        </TouchableOpacity>
 
         {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
@@ -300,6 +257,92 @@ export default function Phase2() {
           />
         </View>
       </ScrollView>
+
+      {/* Power-ups Modal */}
+      <SimpleBottomSheet
+        isVisible={showPowerUpsModal}
+        onClose={() => setShowPowerUpsModal(false)}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            🌸 Power-ups Coletáveis 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginBottom: 20 }}>
+            {powerUps.map((powerUp) => (
+              <Animated.View
+                key={powerUp.id}
+                style={[
+                  {
+                    opacity: collectedPowerUps.includes(powerUp.id) ? 0.3 : powerUpAnimation,
+                  }
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.powerUpButton,
+                    { 
+                      backgroundColor: collectedPowerUps.includes(powerUp.id) ? colors.grey : colors.blue,
+                      width: 120,
+                      height: 80
+                    }
+                  ]}
+                  onPress={() => {
+                    collectPowerUp(powerUp.id);
+                    setShowPowerUpsModal(false);
+                  }}
+                  disabled={collectedPowerUps.includes(powerUp.id)}
+                >
+                  <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 5 }]}>
+                    {powerUp.name}
+                  </Text>
+                  <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                    {powerUp.description}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+        </View>
+      </SimpleBottomSheet>
+
+      {/* Enemies Modal */}
+      <SimpleBottomSheet
+        isVisible={showEnemiesModal}
+        onClose={() => setShowEnemiesModal(false)}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            🌸 Inimigos: Livros Voadores 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+            {enemies.map((enemy) => (
+              <TouchableOpacity
+                key={enemy.id}
+                style={[
+                  buttonStyles.pixelButton,
+                  { 
+                    backgroundColor: defeatedEnemies.includes(enemy.id) ? colors.grey : colors.red,
+                    margin: 5,
+                    width: 100,
+                    height: 60
+                  }
+                ]}
+                onPress={() => {
+                  defeatEnemy(enemy.id);
+                  setShowEnemiesModal(false);
+                }}
+                disabled={defeatedEnemies.includes(enemy.id)}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                  {enemy.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </SimpleBottomSheet>
     </SafeAreaView>
   );
 }

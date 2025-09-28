@@ -5,6 +5,7 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useRouter } from 'expo-router';
+import SimpleBottomSheet from '../components/BottomSheet';
 
 export default function FinalPhase() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function FinalPhase() {
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [starAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
+  const [showGoldStarsModal, setShowGoldStarsModal] = useState(false);
+  const [showSilverStarsModal, setShowSilverStarsModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -355,77 +358,25 @@ export default function FinalPhase() {
           </Text>
         </View>
 
-        {/* Gold Stars (Limitations) */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Estrelas Douradas (Limitações): {collectedGoldStars.length}/5 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {goldStars.map((star) => (
-            <Animated.View
-              key={star.id}
-              style={[
-                {
-                  opacity: collectedGoldStars.includes(star.id) ? 0.3 : starAnimation,
-                  margin: 3
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.starButton,
-                  { 
-                    backgroundColor: collectedGoldStars.includes(star.id) ? colors.grey : colors.accent,
-                    width: 70,
-                    height: 50
-                  }
-                ]}
-                onPress={() => collectGoldStar(star.id)}
-                disabled={collectedGoldStars.includes(star.id)}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
-                  {star.name}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Gold Stars Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginBottom: 15, width: 250 }]}
+          onPress={() => setShowGoldStarsModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Estrelas Douradas (Limitações): {collectedGoldStars.length}/5 🌸
+          </Text>
+        </TouchableOpacity>
 
-        {/* Silver Stars (Future) */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Estrelas Prateadas (Futuro): {collectedSilverStars.length}/5 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {silverStars.map((star) => (
-            <Animated.View
-              key={star.id}
-              style={[
-                {
-                  opacity: collectedSilverStars.includes(star.id) ? 0.3 : starAnimation,
-                  margin: 3
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.starButton,
-                  { 
-                    backgroundColor: collectedSilverStars.includes(star.id) ? colors.grey : colors.mint,
-                    width: 70,
-                    height: 50
-                  }
-                ]}
-                onPress={() => collectSilverStar(star.id)}
-                disabled={collectedSilverStars.includes(star.id)}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
-                  {star.name}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Silver Stars Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.mint, marginBottom: 20, width: 250 }]}
+          onPress={() => setShowSilverStarsModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Estrelas Prateadas (Futuro): {collectedSilverStars.length}/5 🌸
+          </Text>
+        </TouchableOpacity>
 
         {/* Phase Complete */}
         {isPhaseComplete && (
@@ -478,6 +429,98 @@ export default function FinalPhase() {
           />
         </View>
       </ScrollView>
+
+      {/* Gold Stars Modal */}
+      <SimpleBottomSheet
+        isVisible={showGoldStarsModal}
+        onClose={() => setShowGoldStarsModal(false)}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            🌸 Estrelas Douradas (Limitações) 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+            {goldStars.map((star) => (
+              <Animated.View
+                key={star.id}
+                style={[
+                  {
+                    opacity: collectedGoldStars.includes(star.id) ? 0.3 : starAnimation,
+                    margin: 3
+                  }
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.starButton,
+                    { 
+                      backgroundColor: collectedGoldStars.includes(star.id) ? colors.grey : colors.accent,
+                      width: 100,
+                      height: 70
+                    }
+                  ]}
+                  onPress={() => {
+                    collectGoldStar(star.id);
+                    setShowGoldStarsModal(false);
+                  }}
+                  disabled={collectedGoldStars.includes(star.id)}
+                >
+                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                    {star.name}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+        </View>
+      </SimpleBottomSheet>
+
+      {/* Silver Stars Modal */}
+      <SimpleBottomSheet
+        isVisible={showSilverStarsModal}
+        onClose={() => setShowSilverStarsModal(false)}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            🌸 Estrelas Prateadas (Futuro) 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+            {silverStars.map((star) => (
+              <Animated.View
+                key={star.id}
+                style={[
+                  {
+                    opacity: collectedSilverStars.includes(star.id) ? 0.3 : starAnimation,
+                    margin: 3
+                  }
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.starButton,
+                    { 
+                      backgroundColor: collectedSilverStars.includes(star.id) ? colors.grey : colors.mint,
+                      width: 100,
+                      height: 70
+                    }
+                  ]}
+                  onPress={() => {
+                    collectSilverStar(star.id);
+                    setShowSilverStarsModal(false);
+                  }}
+                  disabled={collectedSilverStars.includes(star.id)}
+                >
+                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText }]}>
+                    {star.name}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+        </View>
+      </SimpleBottomSheet>
     </SafeAreaView>
   );
 }

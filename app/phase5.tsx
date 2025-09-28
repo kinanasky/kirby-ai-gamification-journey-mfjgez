@@ -5,6 +5,7 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useRouter } from 'expo-router';
+import SimpleBottomSheet from '../components/BottomSheet';
 
 export default function Phase5() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function Phase5() {
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [bossAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
+  const [showBossesModal, setShowBossesModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -208,44 +210,15 @@ export default function Phase5() {
           </View>
         )}
 
-        {/* Bosses Grid */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Chefes da Dungeon: {defeatedBosses.length}/6 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {bosses.map((boss) => (
-            <Animated.View
-              key={boss.id}
-              style={[
-                {
-                  opacity: defeatedBosses.includes(boss.id) ? 0.3 : bossAnimation,
-                  margin: 5
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.pixelButton,
-                  { 
-                    backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : colors.purple,
-                    width: 90,
-                    height: 70
-                  }
-                ]}
-                onPress={() => challengeBoss(boss.id)}
-                disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 3, color: colors.darkText }]}>
-                  {boss.name}
-                </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
-                  {boss.description}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Bosses Section Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.purple, marginBottom: 20, width: 200 }]}
+          onPress={() => setShowBossesModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Chefes da Dungeon: {defeatedBosses.length}/6 🌸
+          </Text>
+        </TouchableOpacity>
 
         {/* Phase Complete */}
         {isPhaseComplete && (
@@ -301,6 +274,57 @@ export default function Phase5() {
           />
         </View>
       </ScrollView>
+
+      {/* Bosses Modal */}
+      <SimpleBottomSheet
+        isVisible={showBossesModal}
+        onClose={() => setShowBossesModal(false)}
+      >
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+              🌸 Chefes da Dungeon 🌸
+            </Text>
+            
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+              {bosses.map((boss) => (
+                <Animated.View
+                  key={boss.id}
+                  style={[
+                    {
+                      opacity: defeatedBosses.includes(boss.id) ? 0.3 : bossAnimation,
+                      margin: 5
+                    }
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={[
+                      buttonStyles.pixelButton,
+                      { 
+                        backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : colors.purple,
+                        width: 120,
+                        height: 90
+                      }
+                    ]}
+                    onPress={() => {
+                      challengeBoss(boss.id);
+                      setShowBossesModal(false);
+                    }}
+                    disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
+                  >
+                    <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 3, color: colors.darkText }]}>
+                      {boss.name}
+                    </Text>
+                    <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                      {boss.description}
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      </SimpleBottomSheet>
     </SafeAreaView>
   );
 }

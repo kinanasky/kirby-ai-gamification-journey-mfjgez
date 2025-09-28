@@ -5,6 +5,7 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useRouter } from 'expo-router';
+import SimpleBottomSheet from '../components/BottomSheet';
 
 export default function Phase3() {
   const router = useRouter();
@@ -13,6 +14,8 @@ export default function Phase3() {
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [itemAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
+  const [showItemsModal, setShowItemsModal] = useState(false);
+  const [showTerminalsModal, setShowTerminalsModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -171,75 +174,25 @@ export default function Phase3() {
           </Text>
         </View>
 
-        {/* Items Section */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Itens Coletáveis 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {items.map((item) => (
-            <Animated.View
-              key={item.id}
-              style={[
-                {
-                  opacity: collectedItems.includes(item.id) ? 0.3 : itemAnimation,
-                  margin: 5
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.powerUpButton,
-                  { 
-                    backgroundColor: collectedItems.includes(item.id) ? colors.grey : colors.purple,
-                    width: 70,
-                    height: 60
-                  }
-                ]}
-                onPress={() => collectItem(item.id)}
-                disabled={collectedItems.includes(item.id)}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 3 }]}>
-                  {item.name}
-                </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
-                  {item.description}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Items Section Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.purple, marginBottom: 15, width: 200 }]}
+          onPress={() => setShowItemsModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Itens Coletáveis 🌸
+          </Text>
+        </TouchableOpacity>
 
-        {/* NPCs Section */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Terminais de Pesquisa 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {npcs.map((npc) => (
-            <TouchableOpacity
-              key={npc.id}
-              style={[
-                buttonStyles.pixelButton,
-                { 
-                  backgroundColor: talkedToNPCs.includes(npc.id) ? colors.grey : colors.green,
-                  margin: 5,
-                  width: 80,
-                  height: 50
-                }
-              ]}
-              onPress={() => talkToNPC(npc.id)}
-              disabled={talkedToNPCs.includes(npc.id)}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 2, color: colors.darkText }]}>
-                {npc.name}
-              </Text>
-              <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
-                {npc.criteria}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* Terminals Section Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.green, marginBottom: 20, width: 200 }]}
+          onPress={() => setShowTerminalsModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Terminais de Pesquisa 🌸
+          </Text>
+        </TouchableOpacity>
 
         {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
@@ -297,6 +250,96 @@ export default function Phase3() {
           />
         </View>
       </ScrollView>
+
+      {/* Items Modal */}
+      <SimpleBottomSheet
+        isVisible={showItemsModal}
+        onClose={() => setShowItemsModal(false)}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            🌸 Itens Coletáveis 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+            {items.map((item) => (
+              <Animated.View
+                key={item.id}
+                style={[
+                  {
+                    opacity: collectedItems.includes(item.id) ? 0.3 : itemAnimation,
+                    margin: 5
+                  }
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.powerUpButton,
+                    { 
+                      backgroundColor: collectedItems.includes(item.id) ? colors.grey : colors.purple,
+                      width: 100,
+                      height: 80
+                    }
+                  ]}
+                  onPress={() => {
+                    collectItem(item.id);
+                    setShowItemsModal(false);
+                  }}
+                  disabled={collectedItems.includes(item.id)}
+                >
+                  <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 3 }]}>
+                    {item.name}
+                  </Text>
+                  <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                    {item.description}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+        </View>
+      </SimpleBottomSheet>
+
+      {/* Terminals Modal */}
+      <SimpleBottomSheet
+        isVisible={showTerminalsModal}
+        onClose={() => setShowTerminalsModal(false)}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: colors.text }]}>
+            🌸 Terminais de Pesquisa 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+            {npcs.map((npc) => (
+              <TouchableOpacity
+                key={npc.id}
+                style={[
+                  buttonStyles.pixelButton,
+                  { 
+                    backgroundColor: talkedToNPCs.includes(npc.id) ? colors.grey : colors.green,
+                    margin: 5,
+                    width: 100,
+                    height: 70
+                  }
+                ]}
+                onPress={() => {
+                  talkToNPC(npc.id);
+                  setShowTerminalsModal(false);
+                }}
+                disabled={talkedToNPCs.includes(npc.id)}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 2, color: colors.darkText }]}>
+                  {npc.name}
+                </Text>
+                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                  {npc.criteria}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </SimpleBottomSheet>
     </SafeAreaView>
   );
 }

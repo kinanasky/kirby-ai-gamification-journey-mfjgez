@@ -100,7 +100,7 @@ export default function FinalPhase() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [petalAnimation, sakuraAnimation, starAnimation]);
 
   const collectGoldStar = (starId: string) => {
     if (!collectedGoldStars.includes(starId)) {

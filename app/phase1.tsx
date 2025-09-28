@@ -76,7 +76,7 @@ export default function Phase1() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [petalAnimation, sakuraAnimation, starAnimation]);
 
   const collectStar = (starId: string) => {
     if (!collectedStars.includes(starId)) {

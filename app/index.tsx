@@ -57,7 +57,7 @@ export default function MainScreen() {
         })
       ).start();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, petalAnimation, sakuraAnimation, sparkleAnimation]);
 
   const handleStartAdventure = () => {
     console.log('Starting adventure!');

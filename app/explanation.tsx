@@ -74,7 +74,7 @@ export default function ExplanationScreen() {
         useNativeDriver: true,
       })
     ).start();
-  }, []);
+  }, [petalAnimation, sakuraAnimation]);
 
   const nextSection = () => {
     if (currentSection < sections.length - 1) {

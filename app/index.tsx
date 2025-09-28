@@ -158,27 +158,22 @@ export default function MainScreen() {
           A Jornada da IA e Gamificação Brasil–Coreia
         </Text>
 
-        {/* Sakura Character (replacing Kirby) */}
+        {/* Ana Carla Boas Vindas Image (replacing Sakura Character) */}
         <Animated.View 
           style={[
             {
-              width: 120,
-              height: 120,
-              backgroundColor: colors.rose,
-              borderRadius: 60,
-              borderWidth: 3,
-              borderColor: colors.primary,
-              alignItems: 'center',
-              justifyContent: 'center',
               marginBottom: 20,
               transform: [{ translateY: sakuraAnimation }]
             }
           ]}
         >
-          {/* Main sakura flower - no face as requested */}
-          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
+          <Image 
+            source={require('../assets/images/1eb82ef6-1309-4eb9-ae29-33ce88661c60.png')}
+            style={{ width: 120, height: 120, borderRadius: 60 }}
+            resizeMode="cover"
+          />
           
-          {/* Cute sparkles around the flower */}
+          {/* Cute sparkles around the image */}
           <View style={{
             width: 8,
             height: 8,

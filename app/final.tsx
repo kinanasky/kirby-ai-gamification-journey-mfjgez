@@ -166,34 +166,14 @@ export default function FinalPhase() {
             🌸 Créditos 🌸
           </Text>
 
-          {/* Sakura Character */}
-          <Animated.View 
-            style={[
-              commonStyles.sakuraCharacter,
-              { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
-            ]}
-          >
-            <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
-            
-            <View style={{
-              width: 6,
-              height: 6,
-              backgroundColor: colors.accent,
-              borderRadius: 3,
-              position: 'absolute',
-              left: 12,
-              top: 15,
-            }} />
-            <View style={{
-              width: 8,
-              height: 8,
-              backgroundColor: colors.coral,
-              borderRadius: 4,
-              position: 'absolute',
-              right: 15,
-              bottom: 12,
-            }} />
-          </Animated.View>
+          {/* Ana Carla Agradecimentos Image */}
+          <View style={{ marginBottom: 20 }}>
+            <Image 
+              source={require('../assets/images/f45344ae-82ee-4a2a-844f-be133e5b8f93.png')}
+              style={{ width: 120, height: 120, borderRadius: 60 }}
+              resizeMode="cover"
+            />
+          </View>
 
           {/* Developer Attribution */}
           <View style={[commonStyles.card, { backgroundColor: colors.rose, marginBottom: 20 }]}>
@@ -319,36 +299,14 @@ export default function FinalPhase() {
           🌸 Fase Final - Sala do Trono 🌸
         </Text>
 
-        {/* Sakura Character (faceless) */}
-        <Animated.View 
-          style={[
-            commonStyles.sakuraCharacter,
-            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
-          ]}
-        >
-          {/* Main sakura flower - no face */}
-          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
-          
-          {/* Cute sparkles around */}
-          <View style={{
-            width: 6,
-            height: 6,
-            backgroundColor: colors.accent,
-            borderRadius: 3,
-            position: 'absolute',
-            left: 12,
-            top: 15,
-          }} />
-          <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
-            position: 'absolute',
-            right: 15,
-            bottom: 12,
-          }} />
-        </Animated.View>
+        {/* Ana Carla Boas Vindas Image */}
+        <View style={{ marginBottom: 20 }}>
+          <Image 
+            source={require('../assets/images/1eb82ef6-1309-4eb9-ae29-33ce88661c60.png')}
+            style={{ width: 120, height: 120, borderRadius: 60 }}
+            resizeMode="cover"
+          />
+        </View>
 
         {/* Final Message */}
         <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
@@ -521,7 +479,7 @@ export default function FinalPhase() {
                   onPress={() => collectSilverStar(star.id)}
                   disabled={collectedSilverStars.includes(star.id)}
                 >
-                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: '#FFFFFF', lineHeight: 9 }]}>
+                  <Text style={[commonStyles.pixelText, { fontSize: 7, color: '#000000', lineHeight: 9 }]}>
                     {star.name}
                   </Text>
                 </TouchableOpacity>

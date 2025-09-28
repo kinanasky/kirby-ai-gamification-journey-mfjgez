@@ -5,6 +5,7 @@ import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useRouter } from 'expo-router';
+import SimpleBottomSheet from '../components/BottomSheet';
 
 export default function Phase6() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function Phase6() {
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [bossAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
+  const [showGlobalBossesModal, setShowGlobalBossesModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -109,6 +111,7 @@ export default function Phase6() {
   };
 
   const isPhaseComplete = defeatedBosses.length === 3 && showNPCDialogs;
+  const isGlobalBossesComplete = defeatedBosses.length === 3;
 
   if (!fontsLoaded) {
     return null;
@@ -147,36 +150,14 @@ export default function Phase6() {
           🌸 Fase 6 - Batalha Cooperativa 🌸
         </Text>
 
-        {/* Sakura Character (faceless) */}
-        <Animated.View 
-          style={[
-            commonStyles.sakuraCharacter,
-            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
-          ]}
-        >
-          {/* Main sakura flower - no face */}
-          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
-          
-          {/* Cute sparkles around */}
-          <View style={{
-            width: 6,
-            height: 6,
-            backgroundColor: colors.accent,
-            borderRadius: 3,
-            position: 'absolute',
-            left: 12,
-            top: 15,
-          }} />
-          <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
-            position: 'absolute',
-            right: 15,
-            bottom: 12,
-          }} />
-        </Animated.View>
+        {/* Ana Carla Boas Vindas Image */}
+        <View style={{ marginBottom: 20 }}>
+          <Image 
+            source={require('../assets/images/1eb82ef6-1309-4eb9-ae29-33ce88661c60.png')}
+            style={{ width: 120, height: 120, borderRadius: 60 }}
+            resizeMode="cover"
+          />
+        </View>
 
         {/* Cooperation Message */}
         <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
@@ -205,44 +186,15 @@ export default function Phase6() {
           </View>
         )}
 
-        {/* Global Bosses */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Chefes Globais: {defeatedBosses.length}/3 🌸
-        </Text>
-        
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-          {globalBosses.map((boss) => (
-            <Animated.View
-              key={boss.id}
-              style={[
-                {
-                  opacity: defeatedBosses.includes(boss.id) ? 0.3 : bossAnimation,
-                  margin: 5
-                }
-              ]}
-            >
-              <TouchableOpacity
-                style={[
-                  buttonStyles.pixelButton,
-                  { 
-                    backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : colors.red,
-                    width: 100,
-                    height: 80
-                  }
-                ]}
-                onPress={() => challengeBoss(boss.id)}
-                disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 5, color: colors.darkText }]}>
-                  {boss.name}
-                </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
-                  {boss.description}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
+        {/* Global Bosses Button */}
+        <TouchableOpacity
+          style={[buttonStyles.pixelButton, { backgroundColor: colors.red, marginBottom: 20, width: 250 }]}
+          onPress={() => setShowGlobalBossesModal(true)}
+        >
+          <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+            🌸 Chefes Globais: {defeatedBosses.length}/3 🌸
+          </Text>
+        </TouchableOpacity>
 
         {/* NPC Dialogs */}
         {showNPCDialogs && (
@@ -314,6 +266,64 @@ export default function Phase6() {
           />
         </View>
       </ScrollView>
+
+      {/* Global Bosses Modal */}
+      <SimpleBottomSheet
+        isVisible={showGlobalBossesModal}
+        onClose={() => setShowGlobalBossesModal(false)}
+        keepOpen={!isGlobalBossesComplete}
+      >
+        <View style={{ alignItems: 'center' }}>
+          <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 14 }]}>
+            🌸 Chefes Globais 🌸
+          </Text>
+          
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+            {globalBosses.map((boss) => (
+              <Animated.View
+                key={boss.id}
+                style={[
+                  {
+                    opacity: defeatedBosses.includes(boss.id) ? 0.3 : bossAnimation,
+                    margin: 5
+                  }
+                ]}
+              >
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.pixelButton,
+                    { 
+                      backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : colors.red,
+                      width: 100,
+                      height: 80
+                    }
+                  ]}
+                  onPress={() => challengeBoss(boss.id)}
+                  disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
+                >
+                  <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 5, color: '#FFFFFF', lineHeight: 10 }]}>
+                    {boss.name}
+                  </Text>
+                  <Text style={[commonStyles.pixelText, { fontSize: 6, color: '#FFFFFF', lineHeight: 8 }]}>
+                    {boss.description}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
+
+          {isGlobalBossesComplete && (
+            <TouchableOpacity
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
+              onPress={() => setShowGlobalBossesModal(false)}
+            >
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                🌸 Fechar 🌸
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </SimpleBottomSheet>
     </SafeAreaView>
   );
 }

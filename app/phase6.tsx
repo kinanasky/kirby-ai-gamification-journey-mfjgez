@@ -240,7 +240,7 @@ export default function Phase6() {
                   {npc.message}
                 </Text>
                 <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.accent, marginTop: 5 }]}>
-                  👆 Toque para ler mais
+                  👆 Toque para ver mais
                 </Text>
               </TouchableOpacity>
             ))}
@@ -364,11 +364,11 @@ export default function Phase6() {
         <View style={{ alignItems: 'center' }}>
           {selectedNPCData && (
             <>
-              <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 15, color: '#FFFFFF', lineHeight: 16 }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 15, color: colors.darkText, lineHeight: 16 }]}>
                 🌸 {selectedNPCData.name} 🌸
               </Text>
               
-              <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 20, color: '#FFFFFF', lineHeight: 12, textAlign: 'center' }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 20, color: colors.darkText, lineHeight: 12, textAlign: 'center' }]}>
                 {selectedNPCData.fullDialog}
               </Text>
               

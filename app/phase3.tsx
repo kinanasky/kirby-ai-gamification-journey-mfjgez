@@ -10,12 +10,12 @@ import SimpleBottomSheet from '../components/BottomSheet';
 export default function Phase3() {
   const router = useRouter();
   const [collectedItems, setCollectedItems] = useState<string[]>([]);
-  const [talkedToNPCs, setTalkedToNPCs] = useState<string[]>([]);
+  const [usedTools, setUsedTools] = useState<string[]>([]);
   const [sakuraAnimation] = useState(new Animated.Value(0));
   const [itemAnimation] = useState(new Animated.Value(0));
   const [petalAnimation] = useState(new Animated.Value(0));
   const [showItemsModal, setShowItemsModal] = useState(false);
-  const [showTerminalsModal, setShowTerminalsModal] = useState(false);
+  const [showToolsModal, setShowToolsModal] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -29,12 +29,12 @@ export default function Phase3() {
     { id: 'matriz', name: '📋 Matriz de Extração', description: 'Coleta de dados' }
   ];
 
-  const npcs = [
-    { id: 'scopus', name: '🔍 Scopus', criteria: 'Base de dados científica' },
-    { id: 'webofscience', name: '🌐 Web of Science', criteria: 'Indexação internacional' },
-    { id: 'riss', name: '🇰🇷 RISS Korea', criteria: 'Pesquisa coreana' },
-    { id: 'scielo', name: '🇧🇷 Scielo', criteria: 'Pesquisa brasileira' },
-    { id: 'rabbit', name: '🐰 Research Rabbit', criteria: 'Descoberta de artigos' }
+  const researchTools = [
+    { id: 'scopus', name: '🔍 Scopus', description: 'Base de dados científica' },
+    { id: 'webofscience', name: '🌐 Web of Science', description: 'Indexação internacional' },
+    { id: 'riss', name: '🇰🇷 RISS Korea', description: 'Pesquisa coreana' },
+    { id: 'scielo', name: '🇧🇷 Scielo', description: 'Pesquisa brasileira' },
+    { id: 'rabbit', name: '🐰 Research Rabbit', description: 'Descoberta de artigos' }
   ];
 
   useEffect(() => {
@@ -87,10 +87,10 @@ export default function Phase3() {
     }
   };
 
-  const talkToNPC = (npcId: string) => {
-    if (!talkedToNPCs.includes(npcId)) {
-      setTalkedToNPCs([...talkedToNPCs, npcId]);
-      console.log(`Talked to NPC: ${npcId}`);
+  const useTool = (toolId: string) => {
+    if (!usedTools.includes(toolId)) {
+      setUsedTools([...usedTools, toolId]);
+      console.log(`Research tool used: ${toolId}`);
     }
   };
 
@@ -99,9 +99,9 @@ export default function Phase3() {
     router.push('/phase4');
   };
 
-  const isPhaseComplete = collectedItems.length === 5 && talkedToNPCs.length === 5;
+  const isPhaseComplete = collectedItems.length === 5 && usedTools.length === 5;
   const isItemsComplete = collectedItems.length === 5;
-  const isTerminalsComplete = talkedToNPCs.length === 5;
+  const isToolsComplete = usedTools.length === 5;
 
   if (!fontsLoaded) {
     return null;
@@ -172,40 +172,8 @@ export default function Phase3() {
         {/* Mission Description */}
         <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
           <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-            🌸 Missão: Colete todos os itens e fale com cada NPC para descobrir os critérios de pesquisa (2015–2025, IA/gamificação, Brasil/Coreia, efeitos mensuráveis)! ✨
+            🌸 Missão: Colete todos os itens e use cada ferramenta de pesquisa para descobrir os critérios (2015–2025, IA/gamificação, Brasil/Coreia, efeitos mensuráveis)! ✨
           </Text>
-        </View>
-
-        {/* Visible NPCs in the main area */}
-        <View style={{ width: '100%', marginBottom: 20 }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text, textAlign: 'center' }]}>
-            🌸 NPCs no Laboratório 🌸
-          </Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-            {npcs.map((npc) => (
-              <TouchableOpacity
-                key={npc.id}
-                style={[
-                  buttonStyles.pixelButton,
-                  { 
-                    backgroundColor: talkedToNPCs.includes(npc.id) ? colors.grey : colors.green,
-                    margin: 5,
-                    width: 90,
-                    height: 60
-                  }
-                ]}
-                onPress={() => talkToNPC(npc.id)}
-                disabled={talkedToNPCs.includes(npc.id)}
-              >
-                <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 2, color: colors.darkText }]}>
-                  {npc.name}
-                </Text>
-                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
-                  {npc.criteria}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
         </View>
 
         {/* Items Section Button */}
@@ -218,19 +186,19 @@ export default function Phase3() {
           </Text>
         </TouchableOpacity>
 
-        {/* Terminals Section Button */}
+        {/* Research Tools Section Button */}
         <TouchableOpacity
           style={[buttonStyles.pixelButton, { backgroundColor: colors.green, marginBottom: 20, width: 200 }]}
-          onPress={() => setShowTerminalsModal(true)}
+          onPress={() => setShowToolsModal(true)}
         >
           <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
-            🌸 Terminais de Pesquisa 🌸
+            🌸 Ferramentas de Pesquisa 🌸
           </Text>
         </TouchableOpacity>
 
         {/* Progress */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          🌸 Itens: {collectedItems.length}/5 | NPCs: {talkedToNPCs.length}/5 🌸
+          🌸 Itens: {collectedItems.length}/5 | Ferramentas: {usedTools.length}/5 🌸
         </Text>
 
         {/* Phase Complete */}
@@ -343,47 +311,47 @@ export default function Phase3() {
         </View>
       </SimpleBottomSheet>
 
-      {/* Terminals Modal */}
+      {/* Research Tools Modal */}
       <SimpleBottomSheet
-        isVisible={showTerminalsModal}
-        onClose={() => setShowTerminalsModal(false)}
-        keepOpen={!isTerminalsComplete}
+        isVisible={showToolsModal}
+        onClose={() => setShowToolsModal(false)}
+        keepOpen={!isToolsComplete}
       >
         <View style={{ alignItems: 'center' }}>
           <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 20, color: '#FFFFFF', lineHeight: 16 }]}>
-            🌸 Terminais de Pesquisa 🌸
+            🌸 Ferramentas de Pesquisa 🌸
           </Text>
           
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
-            {npcs.map((npc) => (
+            {researchTools.map((tool) => (
               <TouchableOpacity
-                key={npc.id}
+                key={tool.id}
                 style={[
                   buttonStyles.pixelButton,
                   { 
-                    backgroundColor: talkedToNPCs.includes(npc.id) ? colors.grey : colors.green,
+                    backgroundColor: usedTools.includes(tool.id) ? colors.grey : colors.green,
                     margin: 5,
                     width: 100,
                     height: 70
                   }
                 ]}
-                onPress={() => talkToNPC(npc.id)}
-                disabled={talkedToNPCs.includes(npc.id)}
+                onPress={() => useTool(tool.id)}
+                disabled={usedTools.includes(tool.id)}
               >
                 <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 2, color: '#FFFFFF', lineHeight: 10 }]}>
-                  {npc.name}
+                  {tool.name}
                 </Text>
                 <Text style={[commonStyles.pixelText, { fontSize: 6, color: '#FFFFFF', lineHeight: 8 }]}>
-                  {npc.criteria}
+                  {tool.description}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {isTerminalsComplete && (
+          {isToolsComplete && (
             <TouchableOpacity
               style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, marginTop: 10 }]}
-              onPress={() => setShowTerminalsModal(false)}
+              onPress={() => setShowToolsModal(false)}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
                 🌸 Fechar 🌸

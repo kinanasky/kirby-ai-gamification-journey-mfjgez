@@ -2,10 +2,10 @@
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
-  primary: '#FFB6C1',      // Light pink like Kirby
+  primary: '#FFB6C1',      // Light pink like sakura
   secondary: '#E6E6FA',    // Lavender
   accent: '#FFD700',       // Gold for stars
-  background: '#F0F8FF',   // Alice blue - very soft
+  background: '#FFF5F8',   // Very soft pink background
   backgroundAlt: '#FFF0F5', // Lavender blush
   text: '#4B0082',         // Indigo - softer than black
   grey: '#D3D3D3',         // Light gray
@@ -44,6 +44,8 @@ export const buttonStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 4,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
   },
   starButton: {
     backgroundColor: colors.accent,
@@ -55,6 +57,8 @@ export const buttonStyles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 20,
     margin: 5,
+    boxShadow: '1px 1px 2px rgba(0, 0, 0, 0.1)',
+    elevation: 1,
   },
   powerUpButton: {
     backgroundColor: colors.blue,
@@ -66,6 +70,8 @@ export const buttonStyles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     margin: 5,
+    boxShadow: '1px 1px 2px rgba(0, 0, 0, 0.1)',
+    elevation: 1,
   },
 });
 
@@ -132,8 +138,8 @@ export const commonStyles = StyleSheet.create({
     padding: 15,
     marginVertical: 8,
     width: '100%',
-    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
-    elevation: 3,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
   },
   icon: {
     width: 60,
@@ -148,12 +154,12 @@ export const commonStyles = StyleSheet.create({
   dialogBox: {
     backgroundColor: colors.card,
     borderWidth: 2,
-    borderColor: colors.darkText,
+    borderColor: colors.primary,
     borderRadius: 8,
     padding: 15,
     margin: 10,
-    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
-    elevation: 3,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)',
+    elevation: 2,
   },
   star: {
     width: 30,
@@ -163,13 +169,13 @@ export const commonStyles = StyleSheet.create({
     borderColor: colors.darkText,
     borderRadius: 15,
   },
-  kirbyCharacter: {
+  sakuraCharacter: {
     width: 100,
     height: 100,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.rose,
     borderRadius: 50,
-    borderWidth: 2,
-    borderColor: colors.darkText,
+    borderWidth: 3,
+    borderColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,

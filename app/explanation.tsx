@@ -19,31 +19,31 @@ export default function ExplanationScreen() {
   const sections = [
     {
       title: "O que é Inteligência Artificial?",
-      content: "A IA é a capacidade de máquinas realizarem tarefas que normalmente requerem inteligência humana, como aprender, raciocinar e resolver problemas.",
+      content: "A IA é a capacidade de máquinas realizarem tarefas que normalmente requerem inteligência humana, como aprender, raciocinar e resolver problemas. É uma tecnologia que simula processos cognitivos humanos.",
       icon: "🤖",
       color: colors.blue
     },
     {
       title: "IA na Educação",
-      content: "Na educação, a IA pode personalizar o aprendizado, identificar dificuldades dos alunos e oferecer suporte adaptado às necessidades individuais.",
+      content: "Na educação, a IA pode personalizar o aprendizado, identificar dificuldades dos alunos, oferecer feedback instantâneo e adaptar conteúdos às necessidades individuais de cada estudante.",
       icon: "📚",
       color: colors.green
     },
     {
       title: "O que é Gamificação?",
-      content: "Gamificação é o uso de elementos de jogos (pontos, níveis, desafios) em contextos não-lúdicos para aumentar engajamento e motivação.",
+      content: "Gamificação é o uso de elementos de jogos (pontos, níveis, desafios, recompensas) em contextos não-lúdicos para aumentar engajamento, motivação e participação.",
       icon: "🎮",
       color: colors.purple
     },
     {
       title: "Gamificação na Educação",
-      content: "Na educação, a gamificação torna o aprendizado mais divertido e envolvente, usando recompensas e desafios para motivar os estudantes.",
+      content: "Na educação, a gamificação torna o aprendizado mais divertido e envolvente, usando mecânicas de jogos para motivar estudantes e criar experiências de aprendizado mais significativas.",
       icon: "🏆",
       color: colors.accent
     },
     {
-      title: "IA + Gamificação",
-      content: "Juntas, IA e gamificação criam experiências educacionais personalizadas e envolventes, adaptando-se ao ritmo e estilo de cada aluno.",
+      title: "IA + Gamificação = Futuro",
+      content: "Juntas, IA e gamificação criam experiências educacionais personalizadas e envolventes, adaptando-se ao ritmo, estilo e preferências de cada aluno para maximizar o aprendizado.",
       icon: "✨",
       color: colors.coral
     }
@@ -147,13 +147,34 @@ export default function ExplanationScreen() {
             }
           ]}
         />
+        <Animated.View 
+          style={[
+            {
+              position: 'absolute',
+              top: 70,
+              left: '70%',
+              width: 10,
+              height: 10,
+              borderRadius: 5,
+              backgroundColor: colors.coral,
+              transform: [
+                {
+                  translateY: petalAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 180]
+                  })
+                }
+              ]
+            }
+          ]}
+        />
 
         {/* Title */}
         <Text style={[commonStyles.title, { fontSize: 14, marginBottom: 20, color: colors.primary }]}>
-          Guia de IA e Gamificação
+          🌸 Guia de IA e Gamificação 🌸
         </Text>
 
-        {/* Sakura Character (replacing Kirby) */}
+        {/* Sakura Character (faceless as requested) */}
         <Animated.View 
           style={[
             {
@@ -170,60 +191,51 @@ export default function ExplanationScreen() {
             }
           ]}
         >
-          {/* Sakura petals */}
-          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
-          {/* Cute face */}
-          <View style={{
-            width: 12,
-            height: 12,
-            backgroundColor: colors.darkText,
-            borderRadius: 6,
-            position: 'absolute',
-            left: 35,
-            top: 40,
-          }} />
-          <View style={{
-            width: 12,
-            height: 12,
-            backgroundColor: colors.darkText,
-            borderRadius: 6,
-            position: 'absolute',
-            right: 35,
-            top: 40,
-          }} />
-          {/* Smile */}
-          <View style={{
-            width: 20,
-            height: 10,
-            backgroundColor: colors.darkText,
-            borderRadius: 10,
-            position: 'absolute',
-            bottom: 35,
-          }} />
-          {/* Blush */}
+          {/* Main sakura flower - no face */}
+          <Text style={{ fontSize: 60, position: 'absolute' }}>🌸</Text>
+          
+          {/* Cute sparkles around */}
           <View style={{
             width: 8,
             height: 8,
-            backgroundColor: colors.coral,
+            backgroundColor: colors.accent,
             borderRadius: 4,
             position: 'absolute',
-            left: 20,
-            top: 55,
+            left: 15,
+            top: 20,
           }} />
           <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
+            width: 6,
+            height: 6,
+            backgroundColor: colors.purple,
+            borderRadius: 3,
             position: 'absolute',
             right: 20,
-            top: 55,
+            top: 25,
+          }} />
+          <View style={{
+            width: 10,
+            height: 10,
+            backgroundColor: colors.coral,
+            borderRadius: 5,
+            position: 'absolute',
+            left: 20,
+            bottom: 15,
+          }} />
+          <View style={{
+            width: 7,
+            height: 7,
+            backgroundColor: colors.accent,
+            borderRadius: 4,
+            position: 'absolute',
+            right: 15,
+            bottom: 20,
           }} />
         </Animated.View>
 
         {/* Progress indicator */}
         <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          {currentSection + 1} de {sections.length}
+          🌸 {currentSection + 1} de {sections.length} 🌸
         </Text>
 
         {/* Section content */}
@@ -255,7 +267,7 @@ export default function ExplanationScreen() {
             disabled={currentSection === 0}
           >
             <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
-              ← Anterior
+              🌸 Anterior
             </Text>
           </TouchableOpacity>
 
@@ -271,7 +283,7 @@ export default function ExplanationScreen() {
             onPress={currentSection < sections.length - 1 ? nextSection : startGame}
           >
             <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
-              {currentSection < sections.length - 1 ? 'Próximo →' : 'Começar Jogo! 🎮'}
+              {currentSection < sections.length - 1 ? 'Próximo 🌸' : 'Começar Jogo! 🎮'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -282,9 +294,18 @@ export default function ExplanationScreen() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
-            ← Voltar ao Menu
+            🌸 Voltar ao Menu
           </Text>
         </TouchableOpacity>
+
+        {/* Cute decorative elements */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 18 }}>🌺</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

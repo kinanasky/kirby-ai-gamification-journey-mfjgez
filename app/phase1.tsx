@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -18,12 +18,13 @@ export default function Phase1() {
     PressStart2P_400Regular,
   });
 
+  // Stars positioned in the center with smaller squares
   const stars = [
-    { id: 'tech', name: '⭐ Tecnologia', position: { top: 100, left: 50 } },
-    { id: 'brasil', name: '⭐ Brasil', position: { top: 150, right: 60 } },
-    { id: 'coreia', name: '⭐ Coreia', position: { top: 200, left: 80 } },
-    { id: 'ia', name: '⭐ IA', position: { top: 250, right: 40 } },
-    { id: 'gamificacao', name: '⭐ Gamificação', position: { top: 300, left: 60 } }
+    { id: 'tech', name: '⭐ Tecnologia', position: { top: 80, alignSelf: 'center' } },
+    { id: 'brasil', name: '⭐ Brasil', position: { top: 120, alignSelf: 'center' } },
+    { id: 'coreia', name: '⭐ Coreia', position: { top: 160, alignSelf: 'center' } },
+    { id: 'ia', name: '⭐ IA', position: { top: 200, alignSelf: 'center' } },
+    { id: 'gamificacao', name: '⭐ Gamificação', position: { top: 240, alignSelf: 'center' } }
   ];
 
   const messages = [
@@ -150,10 +151,10 @@ export default function Phase1() {
           🌸 Fase 1 - Biblioteca Colorida 🌸
         </Text>
 
-        {/* Library Background */}
+        {/* Library Background - Smaller square as requested */}
         <View style={{
-          width: 300,
-          height: 200,
+          width: 250,
+          height: 300,
           backgroundColor: colors.cream,
           borderWidth: 3,
           borderColor: colors.primary,
@@ -163,68 +164,69 @@ export default function Phase1() {
           justifyContent: 'center',
           position: 'relative'
         }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 30 }]}>📚</Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 8, marginTop: 10 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 25, marginBottom: 10 }]}>📚</Text>
+          <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 15 }]}>
             Biblioteca do Conhecimento
           </Text>
           
           {/* Cute book decorations */}
           <View style={{
-            width: 20,
-            height: 15,
+            width: 15,
+            height: 12,
             backgroundColor: colors.blue,
             borderRadius: 3,
             position: 'absolute',
-            left: 20,
-            top: 30,
+            left: 15,
+            top: 25,
           }} />
           <View style={{
-            width: 18,
-            height: 13,
+            width: 13,
+            height: 10,
             backgroundColor: colors.green,
             borderRadius: 3,
             position: 'absolute',
-            right: 25,
-            top: 40,
+            right: 20,
+            top: 30,
           }} />
           <View style={{
-            width: 22,
-            height: 16,
+            width: 17,
+            height: 13,
             backgroundColor: colors.purple,
             borderRadius: 3,
             position: 'absolute',
-            left: 30,
-            bottom: 30,
+            left: 25,
+            bottom: 25,
           }} />
 
-          {/* Stars to collect */}
-          {stars.map((star) => (
-            <Animated.View
-              key={star.id}
-              style={[
-                {
-                  position: 'absolute',
-                  opacity: collectedStars.includes(star.id) ? 0.3 : starAnimation,
-                  ...star.position
-                }
-              ]}
-            >
-              <TouchableOpacity
+          {/* Stars aligned in the center */}
+          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+            {stars.map((star, index) => (
+              <Animated.View
+                key={star.id}
                 style={[
-                  buttonStyles.starButton,
-                  { 
-                    backgroundColor: collectedStars.includes(star.id) ? colors.grey : colors.accent,
-                    width: 30,
-                    height: 30
+                  {
+                    marginVertical: 8,
+                    opacity: collectedStars.includes(star.id) ? 0.3 : starAnimation,
                   }
                 ]}
-                onPress={() => collectStar(star.id)}
-                disabled={collectedStars.includes(star.id)}
               >
-                <Text style={[commonStyles.pixelText, { fontSize: 12 }]}>⭐</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
+                <TouchableOpacity
+                  style={[
+                    buttonStyles.starButton,
+                    { 
+                      backgroundColor: collectedStars.includes(star.id) ? colors.grey : colors.accent,
+                      width: 25,
+                      height: 25
+                    }
+                  ]}
+                  onPress={() => collectStar(star.id)}
+                  disabled={collectedStars.includes(star.id)}
+                >
+                  <Text style={[commonStyles.pixelText, { fontSize: 10 }]}>⭐</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </View>
         </View>
 
         {/* Sakura Character (faceless) */}
@@ -308,13 +310,27 @@ export default function Phase1() {
           </Text>
         </TouchableOpacity>
 
-        {/* Cute decorative elements */}
+        {/* Cute decorative elements with provided images */}
         <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
           <Text style={{ fontSize: 15 }}>🌸</Text>
           <Text style={{ fontSize: 12 }}>✨</Text>
           <Text style={{ fontSize: 18 }}>📚</Text>
           <Text style={{ fontSize: 12 }}>✨</Text>
           <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements */}
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/5d6b783c-4a9b-49d2-b0e6-8300d8d48aab.jpeg')}
+            style={{ width: 20, height: 20, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/a982b36c-80bc-44c0-a026-35c6227ea0f0.jpeg')}
+            style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

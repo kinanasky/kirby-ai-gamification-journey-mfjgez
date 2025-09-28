@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -9,61 +9,73 @@ import { useRouter } from 'expo-router';
 export default function Phase4() {
   const router = useRouter();
   const [battlePhase, setBattlePhase] = useState(0);
-  const [revealedData, setRevealedData] = useState<string[]>([]);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
-  const [pokemonAnimation] = useState(new Animated.Value(0));
+  const [attacks, setAttacks] = useState(0);
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [battleAnimation] = useState(new Animated.Value(0));
+  const [petalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
   const battleData = [
-    { id: 'ia', text: 'IA: 52%', color: colors.blue },
-    { id: 'gamification', text: 'Gamificação: 28%', color: colors.purple },
-    { id: 'combined', text: 'IA+Gamificação: 20%', color: colors.accent },
-    { id: 'countries', text: 'Brasil: 52% | Coreia: 48%', color: colors.green },
-    { id: 'methods', text: 'Métodos: 72% Quantitativos, 16% Qualitativos, 12% Mistos', color: colors.coral }
+    { stat: 'IA', percentage: '52%', color: colors.blue },
+    { stat: 'Gamificação', percentage: '28%', color: colors.purple },
+    { stat: 'IA+Gamificação', percentage: '20%', color: colors.coral },
+    { stat: 'Brasil', percentage: '52%', color: colors.green },
+    { stat: 'Coreia', percentage: '48%', color: colors.red },
+    { stat: 'Métodos Quantitativos', percentage: '72%', color: colors.accent },
+    { stat: 'Métodos Qualitativos', percentage: '16%', color: colors.orange },
+    { stat: 'Métodos Mistos', percentage: '12%', color: colors.mint }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -6,
-          duration: 1600,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
+          duration: 2000,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 1600,
+          duration: 2000,
           useNativeDriver: true,
         }),
       ])
     ).start();
 
-    // Pokemon battle animation
+    // Battle animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(pokemonAnimation, {
-          toValue: 5,
-          duration: 1200,
+        Animated.timing(battleAnimation, {
+          toValue: 1,
+          duration: 1000,
           useNativeDriver: true,
         }),
-        Animated.timing(pokemonAnimation, {
-          toValue: -5,
-          duration: 1200,
+        Animated.timing(battleAnimation, {
+          toValue: 0.7,
+          duration: 1000,
           useNativeDriver: true,
         }),
       ])
+    ).start();
+
+    // Petal falling animation
+    Animated.loop(
+      Animated.timing(petalAnimation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
   const performAttack = () => {
-    if (battlePhase < battleData.length) {
-      setRevealedData([...revealedData, battleData[battlePhase].id]);
-      setBattlePhase(battlePhase + 1);
-      console.log(`Attack performed! Phase: ${battlePhase + 1}`);
+    if (attacks < battleData.length) {
+      setAttacks(attacks + 1);
+      console.log(`Attack performed: ${attacks + 1}`);
     }
   };
 
@@ -72,7 +84,7 @@ export default function Phase4() {
     router.push('/phase5');
   };
 
-  const isBattleComplete = revealedData.length === battleData.length;
+  const isPhaseComplete = attacks >= battleData.length;
 
   if (!fontsLoaded) {
     return null;
@@ -81,193 +93,160 @@ export default function Phase4() {
   return (
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 4 - Arena Pokémon
-        </Text>
-
-        {/* Battle Arena */}
-        <View style={{
-          width: '100%',
-          height: 200,
-          backgroundColor: colors.mint,
-          borderWidth: 2,
-          borderColor: colors.darkText,
-          borderRadius: 10,
-          marginBottom: 20,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexDirection: 'row',
-          paddingHorizontal: 20,
-          paddingVertical: 20
-        }}>
-          {/* Gengar (Brasil) */}
-          <Animated.View 
-            style={[
-              {
-                width: 80,
-                height: 80,
-                backgroundColor: colors.purple,
-                borderRadius: 40,
-                borderWidth: 2,
-                borderColor: colors.darkText,
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-              { transform: [{ translateX: pokemonAnimation }] }
-            ]}
-          >
-            <Text style={[commonStyles.pixelText, { fontSize: 20 }]}>👻</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6, marginTop: 5 }]}>Gengar</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Brasil</Text>
-          </Animated.View>
-
-          {/* VS */}
-          <Text style={[commonStyles.pixelText, { fontSize: 16, color: colors.red }]}>VS</Text>
-
-          {/* Nidorino (Coreia) */}
-          <Animated.View 
-            style={[
-              {
-                width: 80,
-                height: 80,
-                backgroundColor: colors.blue,
-                borderRadius: 40,
-                borderWidth: 2,
-                borderColor: colors.darkText,
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-              { transform: [{ translateX: pokemonAnimation.interpolate({
-                inputRange: [-5, 5],
-                outputRange: [5, -5]
-              }) }] }
-            ]}
-          >
-            <Text style={[commonStyles.pixelText, { fontSize: 20 }]}>🦏</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6, marginTop: 5 }]}>Nidorino</Text>
-            <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Coreia</Text>
-          </Animated.View>
-        </View>
-
-        {/* Kirby Narrator */}
+        {/* Floating petals */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { 
-              width: 80,
-              height: 80,
-              transform: [{ translateY: kirbyAnimation }] 
+            {
+              position: 'absolute',
+              top: 30,
+              left: 30,
+              width: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: colors.rose,
+              transform: [
+                {
+                  translateY: petalAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 200]
+                  })
+                }
+              ]
             }
           ]}
+        />
+
+        {/* Phase Title */}
+        <Text style={commonStyles.phaseTitle}>
+          🌸 Fase 4 - Arena Pokémon 🌸
+        </Text>
+
+        {/* Sakura Character (faceless) */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
+          ]}
         >
-          {/* Eyes */}
+          {/* Main sakura flower - no face */}
+          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
+          
+          {/* Cute sparkles around */}
           <View style={{
-            width: 12,
-            height: 12,
-            backgroundColor: colors.darkText,
-            borderRadius: 6,
+            width: 6,
+            height: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 3,
             position: 'absolute',
-            left: 18,
-            top: 22,
-          }} />
-          <View style={{
-            width: 12,
-            height: 12,
-            backgroundColor: colors.darkText,
-            borderRadius: 6,
-            position: 'absolute',
-            right: 18,
-            top: 22,
-          }} />
-          {/* Mouth */}
-          <View style={{
-            width: 8,
-            height: 4,
-            backgroundColor: colors.darkText,
-            borderRadius: 4,
-            position: 'absolute',
-            bottom: 26,
-          }} />
-          {/* Cheeks */}
-          <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.red,
-            borderRadius: 4,
-            position: 'absolute',
-            left: 8,
-            top: 34,
+            left: 12,
+            top: 15,
           }} />
           <View style={{
             width: 8,
             height: 8,
-            backgroundColor: colors.red,
+            backgroundColor: colors.coral,
             borderRadius: 4,
             position: 'absolute',
-            right: 8,
-            top: 34,
+            right: 15,
+            bottom: 12,
           }} />
         </Animated.View>
 
-        {/* Battle Progress */}
-        <Text style={[commonStyles.pixelText, { marginVertical: 15, color: colors.text }]}>
-          Dados Revelados: {revealedData.length}/{battleData.length}
+        {/* Battle Arena */}
+        <View style={{
+          width: 300,
+          height: 200,
+          backgroundColor: colors.cream,
+          borderWidth: 3,
+          borderColor: colors.primary,
+          borderRadius: 15,
+          marginBottom: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative'
+        }}>
+          {/* Pokémon do Brasil: Gengar */}
+          <Animated.View style={{
+            position: 'absolute',
+            left: 30,
+            top: 50,
+            opacity: battleAnimation
+          }}>
+            <Text style={{ fontSize: 40 }}>👻</Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+              Gengar (Brasil)
+            </Text>
+          </Animated.View>
+
+          {/* VS */}
+          <Text style={[commonStyles.pixelText, { fontSize: 20, color: colors.darkText }]}>
+            VS
+          </Text>
+
+          {/* Pokémon da Coreia: Nidorino */}
+          <Animated.View style={{
+            position: 'absolute',
+            right: 30,
+            top: 50,
+            opacity: battleAnimation
+          }}>
+            <Text style={{ fontSize: 40 }}>🦏</Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+              Nidorino (Coreia)
+            </Text>
+          </Animated.View>
+        </View>
+
+        {/* Battle Data Revealed */}
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Dados Revelados: {attacks}/{battleData.length} 🌸
         </Text>
 
+        {/* Data Display */}
+        <View style={{ width: '100%', marginBottom: 20 }}>
+          {battleData.slice(0, attacks).map((data, index) => (
+            <View key={index} style={[commonStyles.card, { backgroundColor: data.color, marginVertical: 5 }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                {data.stat}: {data.percentage}
+              </Text>
+            </View>
+          ))}
+        </View>
+
         {/* Attack Button */}
-        {!isBattleComplete && (
+        {!isPhaseComplete && (
           <TouchableOpacity
-            style={[buttonStyles.pixelButton, { backgroundColor: colors.red, marginBottom: 15 }]}
+            style={[buttonStyles.pixelButton, { backgroundColor: colors.red, marginBottom: 20 }]}
             onPress={performAttack}
           >
-            <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-              ⚔️ Atacar e Revelar Dados
+            <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
+              ⚔️ Atacar! ⚔️
             </Text>
           </TouchableOpacity>
         )}
 
-        {/* Revealed Data */}
-        {revealedData.map((dataId) => {
-          const data = battleData.find(d => d.id === dataId);
-          return data ? (
-            <View 
-              key={dataId} 
-              style={[
-                commonStyles.dialogBox, 
-                { 
-                  backgroundColor: data.color,
-                  marginVertical: 5,
-                  width: '90%'
-                }
-              ]}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
-                {data.text}
-              </Text>
-            </View>
-          ) : null;
-        })}
+        {/* Battle Complete Message */}
+        {isPhaseComplete && (
+          <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+            <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+              🌸 A luta é equilibrada… mas o inimigo real é equilibrar desempenho e bem-estar! ✨
+            </Text>
+          </View>
+        )}
 
-        {/* Final Narration */}
-        {isBattleComplete && (
+        {/* Phase Complete */}
+        {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <View style={[commonStyles.dialogBox, { marginBottom: 15 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                A luta é equilibrada… mas o inimigo real é equilibrar desempenho e bem-estar!
-              </Text>
-            </View>
-            
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Batalha Completa! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
+              🎉 Fase 4 Completa! 🌸
             </Text>
             
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                🌸 Próxima Fase 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -279,9 +258,32 @@ export default function Phase4() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            🌸 Voltar
           </Text>
         </TouchableOpacity>
+
+        {/* Cute decorative elements */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 18 }}>⚔️</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements */}
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/a982b36c-80bc-44c0-a026-35c6227ea0f0.jpeg')}
+            style={{ width: 20, height: 20, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/fe75fb18-a9af-410c-b9c0-ddf8ba28fcf0.jpeg')}
+            style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

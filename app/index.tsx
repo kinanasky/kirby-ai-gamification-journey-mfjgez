@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -61,6 +61,11 @@ export default function MainScreen() {
 
   const handleStartAdventure = () => {
     console.log('Starting adventure!');
+    router.push('/phase1');
+  };
+
+  const handleGuide = () => {
+    console.log('Opening guide!');
     router.push('/explanation');
   };
 
@@ -222,15 +227,28 @@ export default function MainScreen() {
           </Text>
         </View>
 
-        {/* Start Button */}
-        <TouchableOpacity
-          style={[buttonStyles.pixelButton, { marginTop: 30, width: '70%', backgroundColor: colors.primary }]}
-          onPress={handleStartAdventure}
-        >
-          <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10 }]}>
-            🌸 Iniciar Aventura 🌸
-          </Text>
-        </TouchableOpacity>
+        {/* Menu Buttons */}
+        <View style={{ width: '100%', alignItems: 'center', marginTop: 30 }}>
+          {/* Start Adventure Button */}
+          <TouchableOpacity
+            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.primary }]}
+            onPress={handleStartAdventure}
+          >
+            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10 }]}>
+              🌸 Iniciar Aventura 🌸
+            </Text>
+          </TouchableOpacity>
+
+          {/* Guide Button (Separated) */}
+          <TouchableOpacity
+            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.accent }]}
+            onPress={handleGuide}
+          >
+            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10 }]}>
+              📚 Guia de IA e Gamificação 📚
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Cute decorative elements */}
         <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-around', width: '100%' }}>
@@ -239,6 +257,25 @@ export default function MainScreen() {
           <Text style={{ fontSize: 18 }}>🌺</Text>
           <Text style={{ fontSize: 15 }}>✨</Text>
           <Text style={{ fontSize: 20 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements using provided images */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/a0ec4a2b-45d2-467b-b1a1-dd085aff862a.jpeg')}
+            style={{ width: 30, height: 30, borderRadius: 15 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/fe75fb18-a9af-410c-b9c0-ddf8ba28fcf0.jpeg')}
+            style={{ width: 25, height: 25, borderRadius: 12 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/03cb0ecf-6fb7-48d8-b0c2-361fe3375bff.jpeg')}
+            style={{ width: 28, height: 28, borderRadius: 14 }}
+            resizeMode="cover"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

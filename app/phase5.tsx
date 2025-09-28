@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -10,7 +10,9 @@ export default function Phase5() {
   const router = useRouter();
   const [defeatedBosses, setDefeatedBosses] = useState<string[]>([]);
   const [currentBoss, setCurrentBoss] = useState<string | null>(null);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [bossAnimation] = useState(new Animated.Value(0));
+  const [petalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -20,62 +22,81 @@ export default function Phase5() {
     { 
       id: 'ferramentas', 
       name: '🔧 Ferramentas', 
-      superclass: 'A',
-      description: 'Classe 1 (13,9%): Ferramentas tecnológicas → IA, machine learning, análise de dados.',
-      color: colors.blue
+      description: 'IA, machine learning, análise de dados',
+      explanation: 'Superclasse A: Fundamentos e Estruturas da Pesquisa Educacional - Classe 1 (13,9%): Ferramentas tecnológicas → IA, machine learning, análise de dados.'
     },
     { 
       id: 'afeto', 
-      name: '💝 Afeto', 
-      superclass: 'A',
-      description: 'Classe 4 (12,5%): Contexto e fatores afetivos → Coreia do Sul, enfermagem, ansiedade, aceitação da tecnologia.',
-      color: colors.red
+      name: '💖 Afeto', 
+      description: 'Coreia do Sul, enfermagem, ansiedade, aceitação da tecnologia',
+      explanation: 'Classe 4 (12,5%): Contexto e fatores afetivos → Coreia do Sul, enfermagem, ansiedade, aceitação da tecnologia.'
     },
     { 
       id: 'metodologia', 
       name: '📊 Metodologia', 
-      superclass: 'A',
-      description: 'Classe 6 (20,8%): Metodologia → estudos experimentais, casos, levantamentos; foco em rigor científico.',
-      color: colors.purple
+      description: 'Estudos experimentais, casos, levantamentos; foco em rigor científico',
+      explanation: 'Classe 6 (20,8%): Metodologia → estudos experimentais, casos, levantamentos; foco em rigor científico.'
     },
     { 
       id: 'eficacia', 
-      name: '⚡ Eficácia', 
-      superclass: 'B',
-      description: 'Classe 3 (18,1%): Eficácia/desempenho → validação de ferramentas (chatbots, gamificação).',
-      color: colors.green
+      name: '🎯 Eficácia', 
+      description: 'Validação de ferramentas (chatbots, gamificação)',
+      explanation: 'Superclasse B: Experiências da Intervenção Pedagógica - Classe 3 (18,1%): Eficácia/desempenho → validação de ferramentas (chatbots, gamificação).'
     },
     { 
       id: 'experiencia', 
-      name: '🌟 Experiência', 
-      superclass: 'B',
-      description: 'Classe 2 (16,7%): Qualidade da experiência → motivação, feedback, personalização, fluxo de aprendizagem.',
-      color: colors.accent
+      name: '✨ Experiência', 
+      description: 'Motivação, feedback, personalização, fluxo de aprendizagem',
+      explanation: 'Classe 2 (16,7%): Qualidade da experiência → motivação, feedback, personalização, fluxo de aprendizagem.'
     },
     { 
       id: 'percepcao', 
-      name: '🎯 Percepção', 
-      superclass: 'B',
-      description: 'Classe 5 (18,1%): Mensuração dos resultados → combinação de métricas objetivas e percepções subjetivas; acesso ≠ desempenho.',
-      color: colors.coral
+      name: '👁️ Percepção', 
+      description: 'Combinação de métricas objetivas e percepções subjetivas; acesso ≠ desempenho',
+      explanation: 'Classe 5 (18,1%): Mensuração dos resultados → combinação de métricas objetivas e percepções subjetivas; acesso ≠ desempenho.'
     }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -5,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
           duration: 2000,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
           duration: 2000,
           useNativeDriver: true,
         }),
       ])
+    ).start();
+
+    // Boss animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(bossAnimation, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(bossAnimation, {
+          toValue: 0.6,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Petal falling animation
+    Animated.loop(
+      Animated.timing(petalAnimation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
@@ -87,8 +108,8 @@ export default function Phase5() {
   const defeatBoss = () => {
     if (currentBoss && !defeatedBosses.includes(currentBoss)) {
       setDefeatedBosses([...defeatedBosses, currentBoss]);
-      console.log(`Boss defeated: ${currentBoss}`);
       setCurrentBoss(null);
+      console.log(`Boss defeated: ${currentBoss}`);
     }
   };
 
@@ -97,185 +118,151 @@ export default function Phase5() {
     router.push('/phase6');
   };
 
-  const isPhaseComplete = defeatedBosses.length === bosses.length;
+  const isPhaseComplete = defeatedBosses.length === 6;
 
   if (!fontsLoaded) {
     return null;
   }
 
+  const currentBossData = currentBoss ? bosses.find(b => b.id === currentBoss) : null;
+
   return (
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 5 - Dungeon IRaMuTeQ
-        </Text>
-
-        {/* Kirby Character */}
+        {/* Floating petals */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { transform: [{ translateY: kirbyAnimation }] }
+            {
+              position: 'absolute',
+              top: 30,
+              left: 30,
+              width: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: colors.rose,
+              transform: [
+                {
+                  translateY: petalAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 200]
+                  })
+                }
+              ]
+            }
+          ]}
+        />
+
+        {/* Phase Title */}
+        <Text style={commonStyles.phaseTitle}>
+          🌸 Fase 5 - Dungeon IRaMuTeQ 🌸
+        </Text>
+
+        {/* Sakura Character (faceless) */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
           ]}
         >
-          {/* Eyes */}
+          {/* Main sakura flower - no face */}
+          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
+          
+          {/* Cute sparkles around */}
           <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
+            width: 6,
+            height: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 3,
             position: 'absolute',
-            left: 22,
-            top: 28,
+            left: 12,
+            top: 15,
           }} />
           <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            right: 22,
-            top: 28,
-          }} />
-          {/* Mouth */}
-          <View style={{
-            width: 10,
-            height: 5,
-            backgroundColor: colors.darkText,
-            borderRadius: 5,
-            position: 'absolute',
-            bottom: 32,
-          }} />
-          {/* Cheeks */}
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            left: 10,
-            top: 42,
-          }} />
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            right: 10,
-            top: 42,
+            right: 15,
+            bottom: 12,
           }} />
         </Animated.View>
 
-        {/* Progress */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Chefes Derrotados: {defeatedBosses.length}/{bosses.length}
-        </Text>
-
-        {/* Superclass A */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.text, fontSize: 10 }]}>
-          Superclasse A: Fundamentos e Estruturas da Pesquisa Educacional
-        </Text>
-
-        {bosses.filter(boss => boss.superclass === 'A').map((boss) => (
-          <View key={boss.id} style={{ width: '100%', alignItems: 'center', marginVertical: 8 }}>
-            <TouchableOpacity
-              style={[
-                buttonStyles.pixelButton,
-                { 
-                  backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : boss.color,
-                  opacity: defeatedBosses.includes(boss.id) ? 0.6 : 1,
-                  width: '90%'
-                }
-              ]}
-              onPress={() => challengeBoss(boss.id)}
-              disabled={defeatedBosses.includes(boss.id)}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 9, color: colors.darkText }]}>
-                {boss.name} {defeatedBosses.includes(boss.id) ? '✓' : ''}
-              </Text>
-            </TouchableOpacity>
-            
-            {defeatedBosses.includes(boss.id) && (
-              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
-                  {boss.description}
-                </Text>
-              </View>
-            )}
-          </View>
-        ))}
-
-        {/* Superclass B */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.text, fontSize: 10 }]}>
-          Superclasse B: Experiências da Intervenção Pedagógica
-        </Text>
-
-        {bosses.filter(boss => boss.superclass === 'B').map((boss) => (
-          <View key={boss.id} style={{ width: '100%', alignItems: 'center', marginVertical: 8 }}>
-            <TouchableOpacity
-              style={[
-                buttonStyles.pixelButton,
-                { 
-                  backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : boss.color,
-                  opacity: defeatedBosses.includes(boss.id) ? 0.6 : 1,
-                  width: '90%'
-                }
-              ]}
-              onPress={() => challengeBoss(boss.id)}
-              disabled={defeatedBosses.includes(boss.id)}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 9, color: colors.darkText }]}>
-                {boss.name} {defeatedBosses.includes(boss.id) ? '✓' : ''}
-              </Text>
-            </TouchableOpacity>
-            
-            {defeatedBosses.includes(boss.id) && (
-              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
-                  {boss.description}
-                </Text>
-              </View>
-            )}
-          </View>
-        ))}
-
-        {/* Current Battle */}
-        {currentBoss && (
-          <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.red, marginBottom: 10 }]}>
-              Enfrentando: {bosses.find(b => b.id === currentBoss)?.name}
+        {/* Current Boss Battle */}
+        {currentBossData && (
+          <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+            <Text style={[commonStyles.pixelText, { fontSize: 9, marginBottom: 10, color: colors.darkText }]}>
+              🌸 Enfrentando: {currentBossData.name} 🌸
+            </Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 10, color: colors.text }]}>
+              {currentBossData.explanation}
             </Text>
             <TouchableOpacity
               style={[buttonStyles.pixelButton, { backgroundColor: colors.red }]}
               onPress={defeatBoss}
             >
-              <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-                ⚔️ Derrotar Chefe
+              <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 8 }]}>
+                ⚔️ Derrotar Chefe! ⚔️
               </Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Mission Complete */}
+        {/* Bosses Grid */}
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Chefes da Dungeon: {defeatedBosses.length}/6 🌸
+        </Text>
+        
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+          {bosses.map((boss) => (
+            <Animated.View
+              key={boss.id}
+              style={[
+                {
+                  opacity: defeatedBosses.includes(boss.id) ? 0.3 : bossAnimation,
+                  margin: 5
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[
+                  buttonStyles.pixelButton,
+                  { 
+                    backgroundColor: defeatedBosses.includes(boss.id) ? colors.grey : colors.purple,
+                    width: 90,
+                    height: 70
+                  }
+                ]}
+                onPress={() => challengeBoss(boss.id)}
+                disabled={defeatedBosses.includes(boss.id) || currentBoss !== null}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 3, color: colors.darkText }]}>
+                  {boss.name}
+                </Text>
+                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
+                  {boss.description}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          ))}
+        </View>
+
+        {/* Phase Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <View style={[commonStyles.dialogBox, { marginBottom: 15 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                Kirby explica cada categoria e libera novas rotas para a pesquisa!
-              </Text>
-            </View>
-            
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Dungeon Completa! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
+              🎉 Fase 5 Completa! 🌸
+            </Text>
+            <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 15, color: colors.text }]}>
+              🌸 Sakura explica cada categoria e libera novas rotas! ✨
             </Text>
             
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                🌸 Próxima Fase 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -287,9 +274,32 @@ export default function Phase5() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            🌸 Voltar
           </Text>
         </TouchableOpacity>
+
+        {/* Cute decorative elements */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 18 }}>🏰</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements */}
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/a0ec4a2b-45d2-467b-b1a1-dd085aff862a.jpeg')}
+            style={{ width: 20, height: 20, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/03cb0ecf-6fb7-48d8-b0c2-361fe3375bff.jpeg')}
+            style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

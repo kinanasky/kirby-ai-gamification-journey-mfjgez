@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -9,8 +9,11 @@ import { useRouter } from 'expo-router';
 export default function Phase7() {
   const router = useRouter();
   const [collectedPieces, setCollectedPieces] = useState<string[]>([]);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
-  const [mapAnimation] = useState(new Animated.Value(0));
+  const [portalOpen, setPortalOpen] = useState(false);
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [pieceAnimation] = useState(new Animated.Value(0));
+  const [portalAnimation] = useState(new Animated.Value(0));
+  const [petalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -19,80 +22,106 @@ export default function Phase7() {
   const mapPieces = [
     { 
       id: 'infraestrutura', 
-      name: '🏗️ Infraestrutura', 
-      description: 'Infraestrutura e Acesso Equitativo - Garantir conectividade e dispositivos para todos',
-      color: colors.blue
+      name: '🏗️ Infraestrutura e Acesso Equitativo',
+      description: 'Garantir acesso universal à tecnologia'
     },
     { 
       id: 'formacao', 
-      name: '👨‍🏫 Formação', 
-      description: 'Formação Docente - Capacitação contínua em tecnologias educacionais',
-      color: colors.green
+      name: '👩‍🏫 Formação Docente',
+      description: 'Capacitar professores para usar IA'
     },
     { 
       id: 'gamificacao', 
-      name: '🎮 Gamificação', 
-      description: 'Gamificação Colaborativa - Elementos de jogo que promovem cooperação',
-      color: colors.purple
+      name: '🎮 Gamificação Colaborativa',
+      description: 'Jogos que promovem cooperação'
     },
     { 
       id: 'ia_personalizada', 
-      name: '🤖 IA Personalizada', 
-      description: 'IA Personalizada - Adaptação às necessidades individuais dos estudantes',
-      color: colors.accent
+      name: '🤖 IA Personalizada',
+      description: 'Adaptação às necessidades individuais'
     },
     { 
       id: 'integracao', 
-      name: '🔄 Integração', 
-      description: 'Integração Presencial–Virtual - Hibridização eficaz dos ambientes',
-      color: colors.coral
+      name: '🔄 Integração Presencial–Virtual',
+      description: 'Combinar ensino físico e digital'
     },
     { 
       id: 'etica', 
-      name: '⚖️ Ética', 
-      description: 'Ética, Privacidade e Cultura - Respeito aos valores e proteção de dados',
-      color: colors.red
+      name: '⚖️ Ética, Privacidade e Cultura',
+      description: 'Proteger dados e respeitar culturas'
     }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -6,
-          duration: 2200,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
+          duration: 2000,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 2200,
+          duration: 2000,
           useNativeDriver: true,
         }),
       ])
     ).start();
 
-    // Map magical glow animation
+    // Piece glowing animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(mapAnimation, {
+        Animated.timing(pieceAnimation, {
           toValue: 1,
-          duration: 3000,
+          duration: 1500,
           useNativeDriver: true,
         }),
-        Animated.timing(mapAnimation, {
-          toValue: 0.3,
-          duration: 3000,
+        Animated.timing(pieceAnimation, {
+          toValue: 0.4,
+          duration: 1500,
           useNativeDriver: true,
         }),
       ])
     ).start();
-  }, []);
+
+    // Portal animation
+    if (portalOpen) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(portalAnimation, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(portalAnimation, {
+            toValue: 0.7,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+
+    // Petal falling animation
+    Animated.loop(
+      Animated.timing(petalAnimation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [portalOpen]);
 
   const collectPiece = (pieceId: string) => {
     if (!collectedPieces.includes(pieceId)) {
-      setCollectedPieces([...collectedPieces, pieceId]);
+      const newCollected = [...collectedPieces, pieceId];
+      setCollectedPieces(newCollected);
       console.log(`Map piece collected: ${pieceId}`);
+      
+      if (newCollected.length === 6) {
+        setPortalOpen(true);
+      }
     }
   };
 
@@ -101,8 +130,6 @@ export default function Phase7() {
     router.push('/final');
   };
 
-  const isPhaseComplete = collectedPieces.length === mapPieces.length;
-
   if (!fontsLoaded) {
     return null;
   }
@@ -110,171 +137,142 @@ export default function Phase7() {
   return (
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 7 - Mapa Mágico
-        </Text>
-
-        {/* Magical Map Display */}
+        {/* Floating petals */}
         <Animated.View 
           style={[
             {
-              width: 200,
-              height: 150,
-              backgroundColor: colors.cream,
-              borderWidth: 3,
-              borderColor: colors.darkText,
-              borderRadius: 15,
-              marginBottom: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: mapAnimation
+              position: 'absolute',
+              top: 30,
+              left: 30,
+              width: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: colors.rose,
+              transform: [
+                {
+                  translateY: petalAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 200]
+                  })
+                }
+              ]
             }
           ]}
-        >
-          <Text style={[commonStyles.pixelText, { fontSize: 20 }]}>🗺️</Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 8, marginTop: 10 }]}>
-            Modelo de Diretrizes
-          </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 6, marginTop: 5 }]}>
-            {collectedPieces.length}/6 peças
-          </Text>
-        </Animated.View>
+        />
 
-        {/* Kirby Character */}
-        <Animated.View 
-          style={[
-            commonStyles.kirbyCharacter,
-            { transform: [{ translateY: kirbyAnimation }] }
-          ]}
-        >
-          {/* Eyes */}
-          <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
-            position: 'absolute',
-            left: 22,
-            top: 28,
-          }} />
-          <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
-            position: 'absolute',
-            right: 22,
-            top: 28,
-          }} />
-          {/* Mouth */}
-          <View style={{
-            width: 10,
-            height: 5,
-            backgroundColor: colors.darkText,
-            borderRadius: 5,
-            position: 'absolute',
-            bottom: 32,
-          }} />
-          {/* Cheeks */}
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            left: 10,
-            top: 42,
-          }} />
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            right: 10,
-            top: 42,
-          }} />
-        </Animated.View>
-
-        {/* Progress */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Peças do Mapa: {collectedPieces.length}/{mapPieces.length}
+        {/* Phase Title */}
+        <Text style={commonStyles.phaseTitle}>
+          🌸 Fase 7 - Mapa Mágico 🌸
         </Text>
 
-        <View style={commonStyles.progressBar}>
-          <View 
-            style={[
-              commonStyles.progressFill, 
-              { width: `${(collectedPieces.length / mapPieces.length) * 100}%` }
-            ]} 
-          />
+        {/* Sakura Character (faceless) */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
+          ]}
+        >
+          {/* Main sakura flower - no face */}
+          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
+          
+          {/* Cute sparkles around */}
+          <View style={{
+            width: 6,
+            height: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 3,
+            position: 'absolute',
+            left: 12,
+            top: 15,
+          }} />
+          <View style={{
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
+            position: 'absolute',
+            right: 15,
+            bottom: 12,
+          }} />
+        </Animated.View>
+
+        {/* Mission Description */}
+        <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+            🌸 Missão: Colete todas as 6 peças do mapa para abrir o portal final! ✨
+          </Text>
         </View>
 
         {/* Map Pieces */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 15, color: colors.text }]}>
-          Diretrizes para Coletar:
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Peças do Mapa: {collectedPieces.length}/6 🌸
         </Text>
-
-        {mapPieces.map((piece, index) => (
-          <View key={piece.id} style={{ width: '100%', alignItems: 'center', marginVertical: 8 }}>
-            <TouchableOpacity
+        
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+          {mapPieces.map((piece) => (
+            <Animated.View
+              key={piece.id}
               style={[
-                buttonStyles.pixelButton,
-                { 
-                  backgroundColor: collectedPieces.includes(piece.id) ? colors.grey : piece.color,
-                  opacity: collectedPieces.includes(piece.id) ? 0.6 : 1,
-                  width: '90%'
+                {
+                  opacity: collectedPieces.includes(piece.id) ? 0.3 : pieceAnimation,
+                  margin: 5
                 }
               ]}
-              onPress={() => collectPiece(piece.id)}
-              disabled={collectedPieces.includes(piece.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 9, color: colors.darkText }]}>
-                {index + 1}. {piece.name} {collectedPieces.includes(piece.id) ? '✓' : ''}
-              </Text>
-            </TouchableOpacity>
-            
-            {collectedPieces.includes(piece.id) && (
-              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
+              <TouchableOpacity
+                style={[
+                  buttonStyles.pixelButton,
+                  { 
+                    backgroundColor: collectedPieces.includes(piece.id) ? colors.grey : colors.accent,
+                    width: 110,
+                    height: 80
+                  }
+                ]}
+                onPress={() => collectPiece(piece.id)}
+                disabled={collectedPieces.includes(piece.id)}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 3, color: colors.darkText }]}>
+                  {piece.name}
+                </Text>
+                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
                   {piece.description}
                 </Text>
-              </View>
-            )}
-          </View>
-        ))}
+              </TouchableOpacity>
+            </Animated.View>
+          ))}
+        </View>
 
-        {/* Portal Opening */}
-        {isPhaseComplete && (
-          <View style={{ alignItems: 'center', marginTop: 30 }}>
-            <View style={[commonStyles.dialogBox, { marginBottom: 15 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                🌟 O mapa está completo! O portal final se abriu! 🌟
-              </Text>
-            </View>
+        {/* Portal */}
+        {portalOpen && (
+          <View style={{ alignItems: 'center', marginTop: 20 }}>
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
+              🎉 Todas as peças coletadas! 🌸
+            </Text>
             
-            <View style={{
+            <Animated.View style={{
               width: 120,
               height: 120,
-              backgroundColor: colors.accent,
+              backgroundColor: colors.purple,
               borderRadius: 60,
               borderWidth: 3,
-              borderColor: colors.darkText,
+              borderColor: colors.accent,
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: 15
+              marginBottom: 20,
+              opacity: portalAnimation
             }}>
-              <Text style={[commonStyles.pixelText, { fontSize: 30 }]}>🌀</Text>
-              <Text style={[commonStyles.pixelText, { fontSize: 6 }]}>Portal Final</Text>
-            </View>
+              <Text style={{ fontSize: 60 }}>🌀</Text>
+              <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                Portal Final
+              </Text>
+            </Animated.View>
             
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.purple }]}
               onPress={openPortal}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                ✨ Entrar no Portal ✨
+                🌸 Entrar no Portal 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -286,9 +284,32 @@ export default function Phase7() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            🌸 Voltar
           </Text>
         </TouchableOpacity>
+
+        {/* Cute decorative elements */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 18 }}>🗺️</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements */}
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/fe75fb18-a9af-410c-b9c0-ddf8ba28fcf0.jpeg')}
+            style={{ width: 20, height: 20, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/a0ec4a2b-45d2-467b-b1a1-dd085aff862a.jpeg')}
+            style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

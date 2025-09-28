@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -9,9 +9,11 @@ import { useRouter } from 'expo-router';
 export default function Phase2() {
   const router = useRouter();
   const [collectedPowerUps, setCollectedPowerUps] = useState<string[]>([]);
-  const [defeatedEnemies, setDefeatedEnemies] = useState(0);
-  const [currentDialog, setCurrentDialog] = useState(0);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [defeatedEnemies, setDefeatedEnemies] = useState<string[]>([]);
+  const [currentMessage, setCurrentMessage] = useState(0);
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [powerUpAnimation] = useState(new Animated.Value(0));
+  const [petalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
@@ -19,32 +21,63 @@ export default function Phase2() {
 
   const powerUps = [
     { id: 'ia', name: '💙 IA', description: 'Absorve dados e cria rotas personalizadas' },
-    { id: 'gamification', name: '💛 Gamificação', description: 'Aumenta motivação e engajamento' }
+    { id: 'gamificacao', name: '💛 Gamificação', description: 'Aumenta motivação e engajamento' }
   ];
 
-  const timelineDialogs = [
-    "70s: Tutores inteligentes!",
-    "80s: Sistemas especialistas!",
-    "90s: Agentes autônomos!",
-    "2010+: Deep Learning!",
-    "A Gamificação nos dá Autonomia, Competência e Conexão Social!"
+  const enemies = [
+    { id: 'livro1', name: '📖 Livro Voador 1' },
+    { id: 'livro2', name: '📖 Livro Voador 2' },
+    { id: 'livro3', name: '📖 Livro Voador 3' }
+  ];
+
+  const messages = [
+    "🌸 70s: Tutores inteligentes surgiram!",
+    "🌸 80s: Sistemas especialistas evoluíram!",
+    "🌸 90s: Agentes autônomos apareceram!",
+    "🌸 2010+: Deep Learning revolucionou tudo!",
+    "🌸 A Gamificação nos dá Autonomia, Competência e Conexão Social! ✨"
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -6,
-          duration: 1800,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
+          duration: 2000,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 1800,
+          duration: 2000,
           useNativeDriver: true,
         }),
       ])
+    ).start();
+
+    // Power-up glowing animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(powerUpAnimation, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(powerUpAnimation, {
+          toValue: 0.5,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Petal falling animation
+    Animated.loop(
+      Animated.timing(petalAnimation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
@@ -55,11 +88,13 @@ export default function Phase2() {
     }
   };
 
-  const defeatEnemy = () => {
-    if (defeatedEnemies < 5) {
-      setDefeatedEnemies(defeatedEnemies + 1);
-      setCurrentDialog(defeatedEnemies);
-      console.log(`Enemy defeated! Total: ${defeatedEnemies + 1}`);
+  const defeatEnemy = (enemyId: string) => {
+    if (!defeatedEnemies.includes(enemyId)) {
+      setDefeatedEnemies([...defeatedEnemies, enemyId]);
+      if (currentMessage < messages.length - 1) {
+        setCurrentMessage(currentMessage + 1);
+      }
+      console.log(`Enemy defeated: ${enemyId}`);
     }
   };
 
@@ -68,7 +103,7 @@ export default function Phase2() {
     router.push('/phase3');
   };
 
-  const isPhaseComplete = collectedPowerUps.length === 2 && defeatedEnemies === 5;
+  const isPhaseComplete = collectedPowerUps.length === 2 && defeatedEnemies.length === 3;
 
   if (!fontsLoaded) {
     return null;
@@ -77,161 +112,156 @@ export default function Phase2() {
   return (
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 2 - Fundamentação Teórica
-        </Text>
-
-        {/* Kirby Character */}
+        {/* Floating petals */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { transform: [{ translateY: kirbyAnimation }] }
+            {
+              position: 'absolute',
+              top: 30,
+              left: 30,
+              width: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: colors.rose,
+              transform: [
+                {
+                  translateY: petalAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 200]
+                  })
+                }
+              ]
+            }
+          ]}
+        />
+
+        {/* Phase Title */}
+        <Text style={commonStyles.phaseTitle}>
+          🌸 Fase 2 - Fundamentação Teórica 🌸
+        </Text>
+
+        {/* Sakura Character (faceless) */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
           ]}
         >
-          {/* Eyes */}
+          {/* Main sakura flower - no face */}
+          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
+          
+          {/* Cute sparkles around */}
           <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
+            width: 6,
+            height: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 3,
             position: 'absolute',
-            left: 22,
-            top: 28,
+            left: 12,
+            top: 15,
           }} />
           <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            right: 22,
-            top: 28,
-          }} />
-          {/* Mouth */}
-          <View style={{
-            width: 10,
-            height: 5,
-            backgroundColor: colors.darkText,
-            borderRadius: 5,
-            position: 'absolute',
-            bottom: 32,
-          }} />
-          {/* Cheeks */}
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            left: 10,
-            top: 42,
-          }} />
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            right: 10,
-            top: 42,
+            right: 15,
+            bottom: 12,
           }} />
         </Animated.View>
 
-        {/* Power-ups Section */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Power-ups Coletáveis:
-        </Text>
+        {/* Current Message */}
+        <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+            {messages[currentMessage]}
+          </Text>
+        </View>
 
-        <View style={commonStyles.collectibleGrid}>
+        {/* Power-ups Section */}
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Power-ups Coletáveis 🌸
+        </Text>
+        
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginBottom: 20 }}>
           {powerUps.map((powerUp) => (
-            <TouchableOpacity
+            <Animated.View
               key={powerUp.id}
               style={[
-                buttonStyles.powerUpButton,
-                { 
-                  backgroundColor: collectedPowerUps.includes(powerUp.id) ? colors.accent : colors.blue,
-                  opacity: collectedPowerUps.includes(powerUp.id) ? 1 : 0.7
+                {
+                  opacity: collectedPowerUps.includes(powerUp.id) ? 0.3 : powerUpAnimation,
                 }
               ]}
-              onPress={() => collectPowerUp(powerUp.id)}
-              disabled={collectedPowerUps.includes(powerUp.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                {powerUp.name}
+              <TouchableOpacity
+                style={[
+                  buttonStyles.powerUpButton,
+                  { 
+                    backgroundColor: collectedPowerUps.includes(powerUp.id) ? colors.grey : colors.blue,
+                    width: 80,
+                    height: 60
+                  }
+                ]}
+                onPress={() => collectPowerUp(powerUp.id)}
+                disabled={collectedPowerUps.includes(powerUp.id)}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 12, marginBottom: 5 }]}>
+                  {powerUp.name}
+                </Text>
+                <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText }]}>
+                  {powerUp.description}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          ))}
+        </View>
+
+        {/* Enemies Section */}
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Inimigos: Livros Voadores 🌸
+        </Text>
+        
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+          {enemies.map((enemy) => (
+            <TouchableOpacity
+              key={enemy.id}
+              style={[
+                buttonStyles.pixelButton,
+                { 
+                  backgroundColor: defeatedEnemies.includes(enemy.id) ? colors.grey : colors.red,
+                  margin: 5,
+                  width: 80,
+                  height: 50
+                }
+              ]}
+              onPress={() => defeatEnemy(enemy.id)}
+              disabled={defeatedEnemies.includes(enemy.id)}
+            >
+              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+                {enemy.name}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Show power-up descriptions */}
-        {collectedPowerUps.map((powerUpId) => {
-          const powerUp = powerUps.find(p => p.id === powerUpId);
-          return powerUp ? (
-            <View key={powerUpId} style={[commonStyles.dialogBox, { marginVertical: 5 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-                {powerUp.description}
-              </Text>
-            </View>
-          ) : null;
-        })}
-
-        {/* Enemies Section */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 15, color: colors.text }]}>
-          Inimigos: Livros Voadores 📚
+        {/* Progress */}
+        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
+          🌸 Power-ups: {collectedPowerUps.length}/2 | Inimigos: {defeatedEnemies.length}/3 🌸
         </Text>
 
-        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.text }]}>
-          Derrotados: {defeatedEnemies}/5
-        </Text>
-
-        <View style={commonStyles.progressBar}>
-          <View 
-            style={[
-              commonStyles.progressFill, 
-              { width: `${(defeatedEnemies / 5) * 100}%` }
-            ]} 
-          />
-        </View>
-
-        <TouchableOpacity
-          style={[
-            buttonStyles.pixelButton, 
-            { 
-              backgroundColor: colors.red,
-              marginVertical: 15,
-              opacity: defeatedEnemies >= 5 ? 0.5 : 1
-            }
-          ]}
-          onPress={defeatEnemy}
-          disabled={defeatedEnemies >= 5}
-        >
-          <Text style={[commonStyles.pixelText, { color: colors.card }]}>
-            ⚔️ Derrotar Livro
-          </Text>
-        </TouchableOpacity>
-
-        {/* Timeline Dialog */}
-        {defeatedEnemies > 0 && (
-          <View style={[commonStyles.dialogBox, { marginTop: 10 }]}>
-            <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-              {timelineDialogs[currentDialog]}
-            </Text>
-          </View>
-        )}
-
-        {/* Mission Complete */}
+        {/* Phase Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Fundamentação Completa! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
+              🎉 Fase 2 Completa! 🌸
             </Text>
+            
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                🌸 Próxima Fase 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -243,9 +273,32 @@ export default function Phase2() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            🌸 Voltar
           </Text>
         </TouchableOpacity>
+
+        {/* Cute decorative elements */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 18 }}>💙</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements */}
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/a0ec4a2b-45d2-467b-b1a1-dd085aff862a.jpeg')}
+            style={{ width: 20, height: 20, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/fe75fb18-a9af-410c-b9c0-ddf8ba28fcf0.jpeg')}
+            style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

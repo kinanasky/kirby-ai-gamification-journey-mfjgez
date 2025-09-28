@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
@@ -10,50 +10,70 @@ export default function Phase3() {
   const router = useRouter();
   const [collectedItems, setCollectedItems] = useState<string[]>([]);
   const [talkedToNPCs, setTalkedToNPCs] = useState<string[]>([]);
-  const [kirbyAnimation] = useState(new Animated.Value(0));
+  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [itemAnimation] = useState(new Animated.Value(0));
+  const [petalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
-  const collectibleItems = [
-    { id: 'prisma', name: '🔮 Pokébola PRISMA', description: 'Metodologia de revisão sistemática' },
-    { id: 'scopus', name: '📊 Terminal Scopus', description: 'Base de dados científica' },
-    { id: 'webofscience', name: '🌐 Web of Science', description: 'Plataforma de pesquisa' },
-    { id: 'riss', name: '🇰🇷 RISS Korea', description: 'Sistema coreano de informação' },
-    { id: 'scielo', name: '🇧🇷 Scielo', description: 'Biblioteca científica brasileira' },
-    { id: 'rabbit', name: '🐰 Research Rabbit', description: 'Descoberta de literatura' }
-  ];
-
-  const specialItems = [
-    { id: 'rayyan', name: '⚡ Rayyan', description: 'Triagem de artigos' },
+  const items = [
+    { id: 'prisma', name: '🔮 Pokébola PRISMA', description: 'Metodologia de revisão' },
+    { id: 'rayyan', name: '⚡ Rayyan', description: 'Ferramenta de triagem' },
     { id: 'iramuteq', name: '🧠 IRaMuTeQ', description: 'Análise textual' },
-    { id: 'jbi', name: '📋 JBI', description: 'Avaliação crítica' },
-    { id: 'matriz', name: '📝 Matriz de Extração', description: 'Organização de dados' }
+    { id: 'jbi', name: '📊 JBI', description: 'Avaliação crítica' },
+    { id: 'matriz', name: '📋 Matriz de Extração', description: 'Coleta de dados' }
   ];
 
   const npcs = [
-    { id: 'metodologista', name: '👨‍🔬 Dr. Método', criteria: '2015-2025: Período temporal' },
-    { id: 'especialista', name: '👩‍💻 Dra. IA', criteria: 'IA/Gamificação: Tecnologias' },
-    { id: 'geografo', name: '🌍 Prof. Global', criteria: 'Brasil/Coreia: Contextos' },
-    { id: 'avaliador', name: '📊 Dra. Métricas', criteria: 'Efeitos mensuráveis: Resultados' }
+    { id: 'scopus', name: '🔍 Scopus', criteria: 'Base de dados científica' },
+    { id: 'webofscience', name: '🌐 Web of Science', criteria: 'Indexação internacional' },
+    { id: 'riss', name: '🇰🇷 RISS Korea', criteria: 'Pesquisa coreana' },
+    { id: 'scielo', name: '🇧🇷 Scielo', criteria: 'Pesquisa brasileira' },
+    { id: 'rabbit', name: '🐰 Research Rabbit', criteria: 'Descoberta de artigos' }
   ];
 
   useEffect(() => {
-    // Kirby floating animation
+    // Sakura floating animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(kirbyAnimation, {
-          toValue: -4,
-          duration: 2200,
+        Animated.timing(sakuraAnimation, {
+          toValue: -10,
+          duration: 2000,
           useNativeDriver: true,
         }),
-        Animated.timing(kirbyAnimation, {
+        Animated.timing(sakuraAnimation, {
           toValue: 0,
-          duration: 2200,
+          duration: 2000,
           useNativeDriver: true,
         }),
       ])
+    ).start();
+
+    // Item glowing animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(itemAnimation, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(itemAnimation, {
+          toValue: 0.4,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Petal falling animation
+    Animated.loop(
+      Animated.timing(petalAnimation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
     ).start();
   }, []);
 
@@ -76,8 +96,7 @@ export default function Phase3() {
     router.push('/phase4');
   };
 
-  const allItems = [...collectibleItems, ...specialItems];
-  const isPhaseComplete = collectedItems.length === allItems.length && talkedToNPCs.length === npcs.length;
+  const isPhaseComplete = collectedItems.length === 5 && talkedToNPCs.length === 5;
 
   if (!fontsLoaded) {
     return null;
@@ -86,174 +105,160 @@ export default function Phase3() {
   return (
     <SafeAreaView style={commonStyles.phaseContainer}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          Fase 3 - Laboratório Pixelado
-        </Text>
-
-        {/* Kirby Character */}
+        {/* Floating petals */}
         <Animated.View 
           style={[
-            commonStyles.kirbyCharacter,
-            { transform: [{ translateY: kirbyAnimation }] }
+            {
+              position: 'absolute',
+              top: 30,
+              left: 30,
+              width: 15,
+              height: 15,
+              borderRadius: 8,
+              backgroundColor: colors.rose,
+              transform: [
+                {
+                  translateY: petalAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 200]
+                  })
+                }
+              ]
+            }
+          ]}
+        />
+
+        {/* Phase Title */}
+        <Text style={commonStyles.phaseTitle}>
+          🌸 Fase 3 - Laboratório Pixelado 🌸
+        </Text>
+
+        {/* Sakura Character (faceless) */}
+        <Animated.View 
+          style={[
+            commonStyles.sakuraCharacter,
+            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
           ]}
         >
-          {/* Eyes */}
+          {/* Main sakura flower - no face */}
+          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
+          
+          {/* Cute sparkles around */}
           <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
+            width: 6,
+            height: 6,
+            backgroundColor: colors.accent,
+            borderRadius: 3,
             position: 'absolute',
-            left: 22,
-            top: 28,
+            left: 12,
+            top: 15,
           }} />
           <View style={{
-            width: 14,
-            height: 14,
-            backgroundColor: colors.darkText,
-            borderRadius: 7,
+            width: 8,
+            height: 8,
+            backgroundColor: colors.coral,
+            borderRadius: 4,
             position: 'absolute',
-            right: 22,
-            top: 28,
-          }} />
-          {/* Mouth */}
-          <View style={{
-            width: 10,
-            height: 5,
-            backgroundColor: colors.darkText,
-            borderRadius: 5,
-            position: 'absolute',
-            bottom: 32,
-          }} />
-          {/* Cheeks */}
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            left: 10,
-            top: 42,
-          }} />
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.red,
-            borderRadius: 5,
-            position: 'absolute',
-            right: 10,
-            top: 42,
+            right: 15,
+            bottom: 12,
           }} />
         </Animated.View>
 
-        {/* Progress */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
-          Itens: {collectedItems.length}/{allItems.length} | NPCs: {talkedToNPCs.length}/{npcs.length}
-        </Text>
-
-        {/* Collectible Items */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 10, color: colors.text }]}>
-          Terminais e Ferramentas:
-        </Text>
-
-        <View style={commonStyles.collectibleGrid}>
-          {collectibleItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={[
-                buttonStyles.powerUpButton,
-                { 
-                  backgroundColor: collectedItems.includes(item.id) ? colors.accent : colors.blue,
-                  opacity: collectedItems.includes(item.id) ? 1 : 0.7,
-                  width: 120,
-                  height: 60
-                }
-              ]}
-              onPress={() => collectItem(item.id)}
-              disabled={collectedItems.includes(item.id)}
-            >
-              <Text style={[commonStyles.pixelText, { fontSize: 7, textAlign: 'center' }]}>
-                {item.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        {/* Mission Description */}
+        <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+          <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
+            🌸 Missão: Colete todos os itens e fale com cada NPC para descobrir os critérios de pesquisa (2015–2025, IA/gamificação, Brasil/Coreia, efeitos mensuráveis)! ✨
+          </Text>
         </View>
 
-        {/* Special Items */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.text }]}>
-          Itens Especiais:
+        {/* Items Section */}
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Itens Coletáveis 🌸
         </Text>
-
-        <View style={commonStyles.collectibleGrid}>
-          {specialItems.map((item) => (
-            <TouchableOpacity
+        
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+          {items.map((item) => (
+            <Animated.View
               key={item.id}
               style={[
-                buttonStyles.powerUpButton,
-                { 
-                  backgroundColor: collectedItems.includes(item.id) ? colors.purple : colors.mint,
-                  opacity: collectedItems.includes(item.id) ? 1 : 0.7,
-                  width: 100,
-                  height: 50
+                {
+                  opacity: collectedItems.includes(item.id) ? 0.3 : itemAnimation,
+                  margin: 5
                 }
               ]}
-              onPress={() => collectItem(item.id)}
-              disabled={collectedItems.includes(item.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 7, textAlign: 'center' }]}>
-                {item.name}
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  buttonStyles.powerUpButton,
+                  { 
+                    backgroundColor: collectedItems.includes(item.id) ? colors.grey : colors.purple,
+                    width: 70,
+                    height: 60
+                  }
+                ]}
+                onPress={() => collectItem(item.id)}
+                disabled={collectedItems.includes(item.id)}
+              >
+                <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 3 }]}>
+                  {item.name}
+                </Text>
+                <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
+                  {item.description}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
           ))}
         </View>
 
         {/* NPCs Section */}
-        <Text style={[commonStyles.pixelText, { marginTop: 20, marginBottom: 10, color: colors.text }]}>
-          Especialistas para Consultar:
+        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
+          🌸 Terminais de Pesquisa 🌸
         </Text>
-
-        {npcs.map((npc) => (
-          <View key={npc.id} style={{ width: '100%', alignItems: 'center', marginVertical: 5 }}>
+        
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: 20 }}>
+          {npcs.map((npc) => (
             <TouchableOpacity
+              key={npc.id}
               style={[
                 buttonStyles.pixelButton,
                 { 
-                  backgroundColor: talkedToNPCs.includes(npc.id) ? colors.green : colors.coral,
-                  opacity: talkedToNPCs.includes(npc.id) ? 1 : 0.8,
-                  width: '90%'
+                  backgroundColor: talkedToNPCs.includes(npc.id) ? colors.grey : colors.green,
+                  margin: 5,
+                  width: 80,
+                  height: 50
                 }
               ]}
               onPress={() => talkToNPC(npc.id)}
               disabled={talkedToNPCs.includes(npc.id)}
             >
-              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
+              <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 2, color: colors.darkText }]}>
                 {npc.name}
               </Text>
+              <Text style={[commonStyles.pixelText, { fontSize: 5, color: colors.darkText }]}>
+                {npc.criteria}
+              </Text>
             </TouchableOpacity>
-            
-            {talkedToNPCs.includes(npc.id) && (
-              <View style={[commonStyles.dialogBox, { marginTop: 5, width: '90%' }]}>
-                <Text style={[commonStyles.pixelText, { fontSize: 7 }]}>
-                  {npc.criteria}
-                </Text>
-              </View>
-            )}
-          </View>
-        ))}
+          ))}
+        </View>
 
-        {/* Mission Complete */}
+        {/* Progress */}
+        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text }]}>
+          🌸 Itens: {collectedItems.length}/5 | NPCs: {talkedToNPCs.length}/5 🌸
+        </Text>
+
+        {/* Phase Complete */}
         {isPhaseComplete && (
           <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15 }]}>
-              🎉 Metodologia Estabelecida! 🎉
+            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
+              🎉 Fase 3 Completa! 🌸
             </Text>
+            
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.green }]}
+              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
               onPress={nextPhase}
             >
               <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                Próxima Fase →
+                🌸 Próxima Fase 🌸
               </Text>
             </TouchableOpacity>
           </View>
@@ -265,9 +270,32 @@ export default function Phase3() {
           onPress={() => router.back()}
         >
           <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            ← Voltar
+            🌸 Voltar
           </Text>
         </TouchableOpacity>
+
+        {/* Cute decorative elements */}
+        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 18 }}>🔮</Text>
+          <Text style={{ fontSize: 12 }}>✨</Text>
+          <Text style={{ fontSize: 15 }}>🌸</Text>
+        </View>
+
+        {/* Cute graphic elements */}
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
+          <Image 
+            source={require('../assets/images/03cb0ecf-6fb7-48d8-b0c2-361fe3375bff.jpeg')}
+            style={{ width: 20, height: 20, borderRadius: 10 }}
+            resizeMode="cover"
+          />
+          <Image 
+            source={require('../assets/images/5d6b783c-4a9b-49d2-b0e6-8300d8d48aab.jpeg')}
+            style={{ width: 18, height: 18, borderRadius: 9 }}
+            resizeMode="cover"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

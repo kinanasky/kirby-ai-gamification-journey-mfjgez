@@ -4,78 +4,100 @@ import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { 
+  useFonts as useNunitoFonts, 
+  Nunito_400Regular, 
+  Nunito_600SemiBold, 
+  Nunito_700Bold 
+} from '@expo-google-fonts/nunito';
 import { useRouter } from 'expo-router';
 
 export default function Phase4() {
   const router = useRouter();
-  const [battlePhase, setBattlePhase] = useState(0);
-  const [attacks, setAttacks] = useState(0);
-  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [battleStarted, setBattleStarted] = useState(false);
+  const [currentAttack, setCurrentAttack] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+  
   const [battleAnimation] = useState(new Animated.Value(0));
-  const [petalAnimation] = useState(new Animated.Value(0));
+  const [sparkleAnimation] = useState(new Animated.Value(0));
+  const [channelAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
-  const battleData = [
-    { stat: 'IA', percentage: '52%', color: colors.blue },
-    { stat: 'Gamificação', percentage: '28%', color: colors.purple },
-    { stat: 'IA+Gamificação', percentage: '20%', color: colors.coral },
-    { stat: 'Brasil', percentage: '52%', color: colors.green },
-    { stat: 'Coreia', percentage: '48%', color: colors.red },
-    { stat: 'Métodos Quantitativos', percentage: '72%', color: colors.accent },
-    { stat: 'Métodos Qualitativos', percentage: '16%', color: colors.orange },
-    { stat: 'Métodos Mistos', percentage: '12%', color: colors.mint }
+  let [nunitoFontsLoaded] = useNunitoFonts({
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
+
+  const attacks = [
+    { name: 'IA Pura', percentage: '52%', description: 'Estudos focados apenas em Inteligência Artificial' },
+    { name: 'Gamificação', percentage: '28%', description: 'Pesquisas sobre elementos de jogos na educação' },
+    { name: 'IA + Gamificação', percentage: '20%', description: 'Combinação de ambas as tecnologias' },
+  ];
+
+  const countries = [
+    { name: 'Brasil', percentage: '52%', pokemon: 'Gengar', image: require('../assets/images/c6ae08a2-41f2-4174-b71e-2a09d61bcdb6.png') },
+    { name: 'Coreia', percentage: '48%', pokemon: 'Nidorino', image: require('../assets/images/8c81e7ac-07c5-41b0-a1e0-7bfd5f0c6dbf.png') },
+  ];
+
+  const methods = [
+    { name: 'Quantitativos', percentage: '72%' },
+    { name: 'Qualitativos', percentage: '16%' },
+    { name: 'Mistos', percentage: '12%' },
   ];
 
   useEffect(() => {
-    // Sakura floating animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(sakuraAnimation, {
-          toValue: -10,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(sakuraAnimation, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+    if (fontsLoaded && nunitoFontsLoaded) {
+      // Start Wii-style animations
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(battleAnimation, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(battleAnimation, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
 
-    // Battle animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(battleAnimation, {
+      Animated.loop(
+        Animated.timing(sparkleAnimation, {
           toValue: 1,
-          duration: 1000,
+          duration: 1200,
           useNativeDriver: true,
-        }),
-        Animated.timing(battleAnimation, {
-          toValue: 0.7,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+        })
+      ).start();
 
-    // Petal falling animation
-    Animated.loop(
-      Animated.timing(petalAnimation, {
-        toValue: 1,
-        duration: 4000,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, [battleAnimation, petalAnimation, sakuraAnimation]);
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(channelAnimation, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(channelAnimation, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [fontsLoaded, nunitoFontsLoaded, battleAnimation, sparkleAnimation, channelAnimation]);
 
   const performAttack = () => {
-    if (attacks < battleData.length) {
-      setAttacks(attacks + 1);
-      console.log(`Attack performed: ${attacks + 1}`);
+    console.log('Performing attack!');
+    if (currentAttack < attacks.length - 1) {
+      setCurrentAttack(currentAttack + 1);
+    } else {
+      setShowResults(true);
     }
   };
 
@@ -84,215 +106,246 @@ export default function Phase4() {
     router.push('/phase5');
   };
 
-  const isPhaseComplete = attacks >= battleData.length;
-
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !nunitoFontsLoaded) {
     return null;
   }
 
   return (
-    <SafeAreaView style={commonStyles.phaseContainer}>
-      <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Floating petals */}
+    <SafeAreaView style={commonStyles.container}>
+      <ScrollView style={commonStyles.phaseContainer}>
+        {/* Wii-style floating elements */}
         <Animated.View 
           style={[
             {
               position: 'absolute',
-              top: 30,
-              left: 30,
-              width: 15,
-              height: 15,
-              borderRadius: 8,
-              backgroundColor: colors.rose,
-              transform: [
-                {
-                  translateY: petalAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 200]
-                  })
-                }
-              ]
+              top: 20,
+              left: 20,
+              width: 12,
+              height: 12,
+              backgroundColor: colors.wiiRed,
+              borderRadius: 6,
+              opacity: sparkleAnimation,
+              zIndex: 1,
+            }
+          ]}
+        />
+        <Animated.View 
+          style={[
+            {
+              position: 'absolute',
+              top: 50,
+              right: 30,
+              width: 10,
+              height: 10,
+              backgroundColor: colors.wiiBlue,
+              borderRadius: 5,
+              opacity: sparkleAnimation,
+              zIndex: 1,
             }
           ]}
         />
 
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          🌸 Fase 4 - Arena Pokémon 🌸
+        {/* Wii-style Phase Title */}
+        <Text style={[commonStyles.wiiTitle, { fontSize: 18, marginBottom: 10 }]}>
+          ⚔️ Fase 4 - Resultados
+        </Text>
+        <Text style={[commonStyles.wiiSubtitle, { marginBottom: 20 }]}>
+          Arena Pokémon
         </Text>
 
-        {/* Sakura Character (faceless) */}
-        <Animated.View 
-          style={[
-            commonStyles.sakuraCharacter,
-            { transform: [{ translateY: sakuraAnimation }], marginBottom: 20 }
-          ]}
-        >
-          {/* Main sakura flower - no face */}
-          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
-          
-          {/* Cute sparkles around */}
-          <View style={{
-            width: 6,
-            height: 6,
-            backgroundColor: colors.accent,
-            borderRadius: 3,
-            position: 'absolute',
-            left: 12,
-            top: 15,
-          }} />
-          <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
-            position: 'absolute',
-            right: 15,
-            bottom: 12,
-          }} />
-        </Animated.View>
-
-        {/* Battle Arena */}
-        <View style={{
-          width: 300,
-          height: 200,
-          backgroundColor: colors.cream,
-          borderWidth: 3,
-          borderColor: colors.primary,
-          borderRadius: 15,
-          marginBottom: 20,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative'
-        }}>
-          {/* Pokémon do Brasil: Gengar */}
-          <Animated.View style={{
-            position: 'absolute',
-            left: 30,
-            top: 20,
-            opacity: battleAnimation,
-            alignItems: 'center'
-          }}>
-            <Image 
-              source={require('../assets/images/ce6d3b7b-68d2-4d48-9d4b-0658fd03e70b.png')}
-              style={{ width: 60, height: 60 }}
-              resizeMode="contain"
-            />
-            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5, textAlign: 'center' }]}>
-              Brasil
-            </Text>
-          </Animated.View>
-
-          {/* VS */}
-          <Text style={[commonStyles.pixelText, { fontSize: 20, color: colors.darkText }]}>
-            VS
+        {/* Battle Arena - Wii Channel Style */}
+        <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+          <Text style={[commonStyles.wiiText, { fontWeight: '600', marginBottom: 15, textAlign: 'center' }]}>
+            🏟️ Arena de Batalha dos Dados
           </Text>
+          
+          {/* Pokemon Display */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginBottom: 20 }}>
+            {countries.map((country, index) => (
+              <Animated.View
+                key={country.name}
+                style={[
+                  {
+                    alignItems: 'center',
+                    transform: [
+                      {
+                        scale: battleAnimation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [1, 1.1]
+                        })
+                      }
+                    ]
+                  }
+                ]}
+              >
+                <View style={[commonStyles.wiiChannelItem, { width: 80, height: 80, marginBottom: 10 }]}>
+                  <Image 
+                    source={country.image}
+                    style={{ width: 60, height: 60 }}
+                    resizeMode="contain"
+                  />
+                </View>
+                <Text style={[commonStyles.wiiText, { fontSize: 12, fontWeight: '600', textAlign: 'center' }]}>
+                  {country.pokemon}
+                </Text>
+                <Text style={[commonStyles.wiiText, { fontSize: 11, color: colors.wiiTextLight, textAlign: 'center' }]}>
+                  {country.name}
+                </Text>
+                <Text style={[commonStyles.wiiText, { fontSize: 10, color: colors.wiiBlue, fontWeight: '600', textAlign: 'center' }]}>
+                  {country.percentage}
+                </Text>
+              </Animated.View>
+            ))}
+          </View>
 
-          {/* Pokémon da Coreia: Nidorino */}
-          <Animated.View style={{
-            position: 'absolute',
-            right: 30,
-            top: 20,
-            opacity: battleAnimation,
-            alignItems: 'center'
-          }}>
-            <Image 
-              source={require('../assets/images/8c81e7ac-07c5-41b0-a1e0-7bfd5f0c6dbf.png')}
-              style={{ width: 60, height: 60 }}
-              resizeMode="contain"
-            />
-            <Text style={[commonStyles.pixelText, { fontSize: 6, color: colors.darkText, marginTop: 5, textAlign: 'center' }]}>
-              Coreia
-            </Text>
-          </Animated.View>
-        </View>
-
-        {/* Battle Data Revealed */}
-        <Text style={[commonStyles.pixelText, { fontSize: 10, marginBottom: 15, color: colors.text }]}>
-          🌸 Dados Revelados: {attacks}/{battleData.length} 🌸
-        </Text>
-
-        {/* Data Display */}
-        <View style={{ width: '100%', marginBottom: 20 }}>
-          {battleData.slice(0, attacks).map((data, index) => (
-            <View key={index} style={[commonStyles.card, { backgroundColor: data.color, marginVertical: 5 }]}>
-              <Text style={[commonStyles.pixelText, { fontSize: 8, color: colors.darkText }]}>
-                {data.stat}: {data.percentage}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Attack Button */}
-        {!isPhaseComplete && (
-          <TouchableOpacity
-            style={[buttonStyles.pixelButton, { backgroundColor: colors.red, marginBottom: 20 }]}
-            onPress={performAttack}
-          >
-            <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-              ⚔️ Atacar! ⚔️
-            </Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Battle Complete Message */}
-        {isPhaseComplete && (
-          <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
-            <Text style={[commonStyles.pixelText, { fontSize: 8 }]}>
-              🌸 A luta é equilibrada… mas o inimigo real é equilibrar desempenho e bem-estar! ✨
+          {/* VS Indicator */}
+          <View style={{ alignItems: 'center', marginBottom: 20 }}>
+            <Text style={[commonStyles.wiiTitle, { fontSize: 16, color: colors.wiiRed }]}>
+              VS
             </Text>
           </View>
-        )}
+        </View>
 
-        {/* Phase Complete */}
-        {isPhaseComplete && (
-          <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10 }]}>
-              🎉 Fase 4 Completa! 🌸
+        {/* Attack Data - Wii Channel Grid */}
+        {!showResults ? (
+          <View>
+            <Text style={[commonStyles.wiiText, { textAlign: 'center', marginBottom: 15, fontWeight: '600' }]}>
+              💥 Ataques Revelam Dados da Pesquisa
             </Text>
             
-            <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent }]}
-              onPress={nextPhase}
-            >
-              <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-                🌸 Próxima Fase 🌸
+            <View style={commonStyles.wiiChannelGrid}>
+              {attacks.map((attack, index) => (
+                <Animated.View
+                  key={attack.name}
+                  style={[
+                    {
+                      transform: [
+                        {
+                          scale: channelAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [1, index <= currentAttack ? 1.05 : 1]
+                          })
+                        }
+                      ]
+                    }
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={[
+                      commonStyles.wiiChannelItem,
+                      { 
+                        backgroundColor: index <= currentAttack ? colors.wiiYellow : colors.wiiWhite,
+                        borderColor: index <= currentAttack ? colors.wiiOrange : colors.wiiDarkGray,
+                        borderWidth: 2,
+                        width: 120,
+                        height: 100,
+                      }
+                    ]}
+                    onPress={performAttack}
+                    disabled={index > currentAttack}
+                  >
+                    <Text style={{ fontSize: 20, marginBottom: 5 }}>
+                      {index <= currentAttack ? '💥' : '⚡'}
+                    </Text>
+                    <Text style={[commonStyles.wiiText, { 
+                      fontSize: 10, 
+                      textAlign: 'center',
+                      fontWeight: '600',
+                      marginBottom: 3,
+                    }]}>
+                      {attack.name}
+                    </Text>
+                    {index <= currentAttack && (
+                      <Text style={[commonStyles.wiiText, { 
+                        fontSize: 12, 
+                        textAlign: 'center',
+                        color: colors.wiiBlue,
+                        fontWeight: '700',
+                      }]}>
+                        {attack.percentage}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </Animated.View>
+              ))}
+            </View>
+
+            {/* Attack Descriptions */}
+            {attacks.slice(0, currentAttack + 1).map((attack, index) => (
+              <View key={`desc-${index}`} style={[commonStyles.dialogBox, { marginVertical: 5 }]}>
+                <Text style={[commonStyles.wiiText, { fontSize: 12, textAlign: 'center' }]}>
+                  💥 <Text style={{ fontWeight: '600' }}>{attack.name}: {attack.percentage}</Text> - {attack.description}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View>
+            {/* Final Results */}
+            <Text style={[commonStyles.wiiText, { textAlign: 'center', marginBottom: 15, fontWeight: '600' }]}>
+              📊 Resultados Finais da Batalha
+            </Text>
+
+            {/* Methods Data */}
+            <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+              <Text style={[commonStyles.wiiText, { fontWeight: '600', marginBottom: 10, textAlign: 'center' }]}>
+                🔬 Métodos de Pesquisa
               </Text>
-            </TouchableOpacity>
+              {methods.map((method, index) => (
+                <Text key={method.name} style={[commonStyles.wiiText, { fontSize: 12, textAlign: 'center', marginBottom: 5 }]}>
+                  • {method.name}: <Text style={{ color: colors.wiiBlue, fontWeight: '600' }}>{method.percentage}</Text>
+                </Text>
+              ))}
+            </View>
+
+            {/* Battle Conclusion */}
+            <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+              <Text style={[commonStyles.wiiText, { fontSize: 13, textAlign: 'center', fontWeight: '600', marginBottom: 8 }]}>
+                🏆 Conclusão da Batalha
+              </Text>
+              <Text style={[commonStyles.wiiText, { fontSize: 12, textAlign: 'center', color: colors.wiiTextLight }]}>
+                A luta é equilibrada... mas o inimigo real é equilibrar desempenho e bem-estar!
+              </Text>
+            </View>
+
+            {/* Next Phase Button */}
+            <Animated.View
+              style={[
+                { 
+                  alignItems: 'center',
+                  transform: [
+                    {
+                      scale: channelAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.05]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[buttonStyles.wiiActionButton, { paddingHorizontal: 30 }]}
+                onPress={nextPhase}
+              >
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontWeight: '600' }]}>
+                  🚀 Próxima Fase
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
           </View>
         )}
 
         {/* Back Button */}
-        <TouchableOpacity
-          style={[buttonStyles.pixelButton, { backgroundColor: colors.grey, marginTop: 20 }]}
-          onPress={() => router.back()}
-        >
-          <Text style={[commonStyles.pixelText, { color: colors.darkText }]}>
-            🌸 Voltar
-          </Text>
-        </TouchableOpacity>
-
-        {/* Cute decorative elements */}
-        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
-          <Text style={{ fontSize: 15 }}>🌸</Text>
-          <Text style={{ fontSize: 12 }}>✨</Text>
-          <Text style={{ fontSize: 18 }}>⚔️</Text>
-          <Text style={{ fontSize: 12 }}>✨</Text>
-          <Text style={{ fontSize: 15 }}>🌸</Text>
-        </View>
-
-        {/* Cute graphic elements */}
-        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
-          <Image 
-            source={require('../assets/images/a982b36c-80bc-44c0-a026-35c6227ea0f0.jpeg')}
-            style={{ width: 20, height: 20, borderRadius: 10 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/fe75fb18-a9af-410c-b9c0-ddf8ba28fcf0.jpeg')}
-            style={{ width: 18, height: 18, borderRadius: 9 }}
-            resizeMode="cover"
-          />
+        <View style={{ marginTop: 20, marginBottom: 30, alignItems: 'center' }}>
+          <TouchableOpacity
+            style={[buttonStyles.wiiMenuButton, { paddingHorizontal: 25 }]}
+            onPress={() => router.back()}
+          >
+            <Text style={[commonStyles.wiiText, { color: colors.wiiTextDark, fontWeight: '600' }]}>
+              ← Voltar
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

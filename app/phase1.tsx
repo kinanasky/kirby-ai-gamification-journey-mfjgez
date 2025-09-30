@@ -4,88 +4,88 @@ import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { 
+  useFonts as useNunitoFonts, 
+  Nunito_400Regular, 
+  Nunito_600SemiBold, 
+  Nunito_700Bold 
+} from '@expo-google-fonts/nunito';
 import { useRouter } from 'expo-router';
 
 export default function Phase1() {
   const router = useRouter();
-  const [collectedStars, setCollectedStars] = useState<string[]>([]);
-  const [currentMessage, setCurrentMessage] = useState(0);
-  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [stars, setStars] = useState([
+    { id: '1', collected: false, text: 'O mundo está mudando rápido com a tecnologia! (UNESCO, 2024)' },
+    { id: '2', collected: false, text: 'No Brasil, enfrentamos desigualdades e evasão escolar. (INEP, 2023)' },
+    { id: '3', collected: false, text: 'Na Coreia do Sul, há pressão acadêmica e problemas de saúde mental. (OECD, 2022)' },
+    { id: '4', collected: false, text: 'A IA e a Gamificação podem transformar a educação! (Moran, 2022)' },
+    { id: '5', collected: false, text: 'Mas falta um modelo adaptado ao Brasil. Vamos atrás disso!' },
+  ]);
+  
+  const [channelAnimation] = useState(new Animated.Value(0));
+  const [sparkleAnimation] = useState(new Animated.Value(0));
   const [starAnimation] = useState(new Animated.Value(0));
-  const [petalAnimation] = useState(new Animated.Value(0));
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
-  // Stars positioned horizontally as requested
-  const stars = [
-    { id: 'tech', name: '⭐ Tecnologia' },
-    { id: 'brasil', name: '⭐ Brasil' },
-    { id: 'coreia', name: '⭐ Coreia' },
-    { id: 'ia', name: '⭐ IA' },
-    { id: 'gamificacao', name: '⭐ Gamificação' }
-  ];
-
-  const messages = [
-    "🌸 O mundo está mudando rápido com a tecnologia! (UNESCO, 2024)",
-    "🌸 No Brasil, enfrentamos desigualdades e evasão escolar. (INEP, 2024)",
-    "🌸 Na Coreia do Sul, há pressão acadêmica e problemas de saúde mental. (OECD, 2023)",
-    "🌸 A IA e a Gamificação podem transformar a educação! (Moran, 2022)",
-    "🌸 Mas falta um modelo adaptado ao Brasil. Vamos atrás disso! ✨"
-  ];
+  let [nunitoFontsLoaded] = useNunitoFonts({
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
 
   useEffect(() => {
-    // Sakura floating animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(sakuraAnimation, {
-          toValue: -10,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(sakuraAnimation, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+    if (fontsLoaded && nunitoFontsLoaded) {
+      // Start Wii-style animations
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(channelAnimation, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(channelAnimation, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
 
-    // Star twinkling animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(starAnimation, {
+      Animated.loop(
+        Animated.timing(sparkleAnimation, {
           toValue: 1,
           duration: 1500,
           useNativeDriver: true,
-        }),
-        Animated.timing(starAnimation, {
-          toValue: 0.3,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
+        })
+      ).start();
 
-    // Petal falling animation
-    Animated.loop(
-      Animated.timing(petalAnimation, {
-        toValue: 1,
-        duration: 4000,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, [petalAnimation, sakuraAnimation, starAnimation]);
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(starAnimation, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(starAnimation, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [fontsLoaded, nunitoFontsLoaded, channelAnimation, sparkleAnimation, starAnimation]);
 
   const collectStar = (starId: string) => {
-    if (!collectedStars.includes(starId)) {
-      setCollectedStars([...collectedStars, starId]);
-      if (currentMessage < messages.length - 1) {
-        setCurrentMessage(currentMessage + 1);
-      }
-      console.log(`Star collected: ${starId}`);
-    }
+    console.log(`Collecting star ${starId}`);
+    setStars(prevStars => 
+      prevStars.map(star => 
+        star.id === starId ? { ...star, collected: true } : star
+      )
+    );
   };
 
   const nextPhase = () => {
@@ -93,34 +93,29 @@ export default function Phase1() {
     router.push('/phase2');
   };
 
-  const isPhaseComplete = collectedStars.length === 5;
+  const collectedCount = stars.filter(star => star.collected).length;
+  const allStarsCollected = collectedCount === stars.length;
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !nunitoFontsLoaded) {
     return null;
   }
 
   return (
-    <SafeAreaView style={commonStyles.phaseContainer}>
-      <ScrollView contentContainerStyle={{ alignItems: 'center', paddingVertical: 20 }}>
-        {/* Floating petals */}
+    <SafeAreaView style={commonStyles.container}>
+      <ScrollView style={commonStyles.phaseContainer}>
+        {/* Wii-style floating elements */}
         <Animated.View 
           style={[
             {
               position: 'absolute',
               top: 30,
               left: 30,
-              width: 15,
-              height: 15,
-              borderRadius: 8,
-              backgroundColor: colors.rose,
-              transform: [
-                {
-                  translateY: petalAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 200]
-                  })
-                }
-              ]
+              width: 10,
+              height: 10,
+              backgroundColor: colors.wiiBlue,
+              borderRadius: 5,
+              opacity: sparkleAnimation,
+              zIndex: 1,
             }
           ]}
         />
@@ -128,234 +123,159 @@ export default function Phase1() {
           style={[
             {
               position: 'absolute',
-              top: 50,
-              right: 50,
-              width: 12,
-              height: 12,
-              borderRadius: 6,
-              backgroundColor: colors.primary,
-              transform: [
-                {
-                  translateY: petalAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 250]
-                })
-                }
-              ]
+              top: 60,
+              right: 40,
+              width: 8,
+              height: 8,
+              backgroundColor: colors.wiiYellow,
+              borderRadius: 4,
+              opacity: sparkleAnimation,
+              zIndex: 1,
             }
           ]}
         />
 
-        {/* Phase Title */}
-        <Text style={commonStyles.phaseTitle}>
-          🌸 Fase 1 - Biblioteca Colorida 🌸
+        {/* Wii-style Phase Title */}
+        <Text style={[commonStyles.wiiTitle, { fontSize: 18, marginBottom: 10 }]}>
+          📚 Fase 1 - Introdução
+        </Text>
+        <Text style={[commonStyles.wiiSubtitle, { marginBottom: 20 }]}>
+          Biblioteca Colorida
         </Text>
 
-        {/* Library Background - Smaller square as requested */}
-        <View style={{
-          width: 280,
-          height: 200,
-          backgroundColor: colors.cream,
-          borderWidth: 3,
-          borderColor: colors.primary,
-          borderRadius: 15,
-          marginBottom: 20,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          paddingHorizontal: 15,
-          paddingVertical: 20
-        }}>
-          <Text style={[commonStyles.pixelText, { fontSize: 25, marginBottom: 10 }]}>📚</Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 7, marginBottom: 15, textAlign: 'center' }]}>
-            Biblioteca do Conhecimento
-          </Text>
-          
-          {/* Cute book decorations */}
-          <View style={{
-            width: 15,
-            height: 12,
-            backgroundColor: colors.blue,
-            borderRadius: 3,
-            position: 'absolute',
-            left: 15,
-            top: 25,
-          }} />
-          <View style={{
-            width: 13,
-            height: 10,
-            backgroundColor: colors.green,
-            borderRadius: 3,
-            position: 'absolute',
-            right: 20,
-            top: 30,
-          }} />
-          <View style={{
-            width: 17,
-            height: 13,
-            backgroundColor: colors.purple,
-            borderRadius: 3,
-            position: 'absolute',
-            left: 25,
-            bottom: 25,
-          }} />
-
-          {/* Stars aligned horizontally as requested */}
-          <View style={{ 
-            flexDirection: 'row', 
-            flexWrap: 'wrap',
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            marginTop: 10,
-            paddingHorizontal: 10
-          }}>
-            {stars.map((star, index) => (
-              <Animated.View
-                key={star.id}
-                style={[
-                  {
-                    marginHorizontal: 4,
-                    marginVertical: 4,
-                    opacity: collectedStars.includes(star.id) ? 0.3 : starAnimation,
-                  }
-                ]}
-              >
-                <TouchableOpacity
-                  style={[
-                    buttonStyles.starButton,
-                    { 
-                      backgroundColor: collectedStars.includes(star.id) ? colors.grey : colors.accent,
-                      width: 30,
-                      height: 30
-                    }
-                  ]}
-                  onPress={() => collectStar(star.id)}
-                  disabled={collectedStars.includes(star.id)}
-                >
-                  <Text style={[commonStyles.pixelText, { fontSize: 12 }]}>⭐</Text>
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
+        {/* Ana Character */}
+        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+          <View style={[commonStyles.sakuraCharacter, { width: 80, height: 80 }]}>
+            <Image 
+              source={require('../assets/images/1eb82ef6-1309-4eb9-ae29-33ce88661c60.png')}
+              style={{ width: 70, height: 70, borderRadius: 35 }}
+              resizeMode="cover"
+            />
           </View>
         </View>
 
-        {/* Sakura Character (faceless) */}
-        <Animated.View 
-          style={[
-            commonStyles.sakuraCharacter,
-            { transform: [{ translateY: sakuraAnimation }] }
-          ]}
-        >
-          {/* Main sakura flower - no face */}
-          <Text style={{ fontSize: 50, position: 'absolute' }}>🌸</Text>
-          
-          {/* Cute sparkles around */}
-          <View style={{
-            width: 6,
-            height: 6,
-            backgroundColor: colors.accent,
-            borderRadius: 3,
-            position: 'absolute',
-            left: 12,
-            top: 15,
-          }} />
-          <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.coral,
-            borderRadius: 4,
-            position: 'absolute',
-            right: 15,
-            bottom: 12,
-          }} />
-        </Animated.View>
-
-        {/* Progress */}
-        <Text style={[commonStyles.pixelText, { marginBottom: 15, color: colors.text, textAlign: 'center' }]}>
-          🌸 Estrelas coletadas: {collectedStars.length}/5 🌸
-        </Text>
-
-        {/* Current Message - Fixed text alignment */}
-        <View style={[commonStyles.dialogBox, { marginBottom: 20, alignItems: 'center', justifyContent: 'center' }]}>
-          <Text style={[commonStyles.pixelText, { fontSize: 8, textAlign: 'center' }]}>
-            {messages[currentMessage]}
-          </Text>
-        </View>
-
-        {/* Mission Description - Fixed text alignment */}
-        <View style={[commonStyles.card, { backgroundColor: colors.rose, marginBottom: 20, alignItems: 'center', justifyContent: 'center' }]}>
-          <Text style={[commonStyles.pixelText, { fontSize: 9, marginBottom: 10, color: colors.darkText, textAlign: 'center' }]}>
+        {/* Mission Description - Wii Style */}
+        <View style={[commonStyles.dialogBox, { marginBottom: 20 }]}>
+          <Text style={[commonStyles.wiiText, { fontWeight: '600', marginBottom: 8 }]}>
             🎯 Missão: Coletar 5 estrelas de conhecimento
           </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 7, color: colors.darkText, textAlign: 'center' }]}>
-            Toque nas estrelas para descobrir os fundamentos da pesquisa! ✨
+          <Text style={[commonStyles.wiiText, { fontSize: 12, color: colors.wiiTextLight }]}>
+            Toque nas estrelas para descobrir fatos importantes sobre educação e tecnologia!
           </Text>
         </View>
 
-        {/* Phase Complete */}
-        {isPhaseComplete && (
-          <View style={{ alignItems: 'center', marginTop: 20 }}>
-            <Text style={[commonStyles.pixelText, { color: colors.accent, marginBottom: 15, fontSize: 10, textAlign: 'center' }]}>
-              🎉 Fase 1 Completa! 🌸
+        {/* Progress Bar - Wii Style */}
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[commonStyles.wiiText, { textAlign: 'center', marginBottom: 10, fontWeight: '600' }]}>
+            Progresso: {collectedCount}/5 ⭐
+          </Text>
+          <View style={commonStyles.progressBar}>
+            <Animated.View 
+              style={[
+                commonStyles.progressFill, 
+                { 
+                  width: `${(collectedCount / stars.length) * 100}%`,
+                  backgroundColor: colors.wiiBlue,
+                }
+              ]} 
+            />
+          </View>
+        </View>
+
+        {/* Stars Grid - Wii Channel Style */}
+        <View style={commonStyles.wiiChannelGrid}>
+          {stars.map((star, index) => (
+            <Animated.View
+              key={star.id}
+              style={[
+                {
+                  transform: [
+                    {
+                      scale: starAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, star.collected ? 1 : 1.1]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[
+                  commonStyles.wiiChannelItem,
+                  { 
+                    backgroundColor: star.collected ? colors.wiiYellow : colors.wiiWhite,
+                    borderColor: star.collected ? colors.wiiOrange : colors.wiiDarkGray,
+                    borderWidth: 2,
+                  }
+                ]}
+                onPress={() => collectStar(star.id)}
+                disabled={star.collected}
+              >
+                <Text style={{ fontSize: 24, marginBottom: 5 }}>
+                  {star.collected ? '⭐' : '☆'}
+                </Text>
+                <Text style={[commonStyles.wiiText, { 
+                  fontSize: 10, 
+                  textAlign: 'center',
+                  color: star.collected ? colors.wiiTextDark : colors.wiiTextLight,
+                  fontWeight: '600'
+                }]}>
+                  Estrela {star.id}
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          ))}
+        </View>
+
+        {/* Knowledge Display */}
+        {stars.filter(star => star.collected).map((star) => (
+          <View key={`knowledge-${star.id}`} style={[commonStyles.dialogBox, { marginVertical: 5 }]}>
+            <Text style={[commonStyles.wiiText, { fontSize: 12, textAlign: 'center' }]}>
+              ⭐ {star.text}
             </Text>
-            
+          </View>
+        ))}
+
+        {/* Next Phase Button - Wii Style */}
+        {allStarsCollected && (
+          <Animated.View
+            style={[
+              { 
+                marginTop: 30, 
+                alignItems: 'center',
+                transform: [
+                  {
+                    scale: channelAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1, 1.05]
+                    })
+                  }
+                ]
+              }
+            ]}
+          >
             <TouchableOpacity
-              style={[buttonStyles.pixelButton, { backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }]}
+              style={[buttonStyles.wiiActionButton, { paddingHorizontal: 30 }]}
               onPress={nextPhase}
             >
-              <Text style={[commonStyles.pixelText, { color: colors.darkText, textAlign: 'center' }]}>
-                🌸 Próxima Fase 🌸
+              <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontWeight: '600' }]}>
+                🚀 Próxima Fase
               </Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         )}
 
-        {/* Back Button */}
-        <TouchableOpacity
-          style={[buttonStyles.pixelButton, { backgroundColor: colors.grey, marginTop: 20, alignItems: 'center', justifyContent: 'center' }]}
-          onPress={() => router.back()}
-        >
-          <Text style={[commonStyles.pixelText, { color: colors.darkText, textAlign: 'center' }]}>
-            🌸 Voltar
-          </Text>
-        </TouchableOpacity>
-
-        {/* Cute decorative elements */}
-        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
-          <Text style={{ fontSize: 15 }}>🌸</Text>
-          <Text style={{ fontSize: 12 }}>✨</Text>
-          <Text style={{ fontSize: 18 }}>📚</Text>
-          <Text style={{ fontSize: 12 }}>✨</Text>
-          <Text style={{ fontSize: 15 }}>🌸</Text>
-        </View>
-
-        {/* Cute graphic elements using provided images */}
-        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around', width: '100%' }}>
-          <Image 
-            source={require('../assets/images/b0462bac-ce40-4426-85e7-7441474a9766.jpeg')}
-            style={{ width: 20, height: 20, borderRadius: 10 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/745c21d8-d092-4f93-99c1-c2cc531fb239.jpeg')}
-            style={{ width: 18, height: 18, borderRadius: 9 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/0c5e2954-df29-4cc6-955a-81207bc59f0a.jpeg')}
-            style={{ width: 22, height: 22, borderRadius: 11 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/2595260a-77d5-4793-835a-1e1dce880580.jpeg')}
-            style={{ width: 19, height: 19, borderRadius: 10 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/5e8a3f35-ca6c-4275-9669-7ed177ebb68d.jpeg')}
-            style={{ width: 21, height: 21, borderRadius: 11 }}
-            resizeMode="cover"
-          />
+        {/* Back Button - Wii Style */}
+        <View style={{ marginTop: 20, marginBottom: 30, alignItems: 'center' }}>
+          <TouchableOpacity
+            style={[buttonStyles.wiiMenuButton, { paddingHorizontal: 25 }]}
+            onPress={() => router.back()}
+          >
+            <Text style={[commonStyles.wiiText, { color: colors.wiiTextDark, fontWeight: '600' }]}>
+              ← Voltar ao Menu
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

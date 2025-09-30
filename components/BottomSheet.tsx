@@ -1,4 +1,5 @@
 
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -10,47 +11,38 @@ import {
   TouchableWithoutFeedback,
   Dimensions
 } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { colors } from '../styles/commonStyles';
 
 interface SimpleBottomSheetProps {
   children?: React.ReactNode;
   isVisible?: boolean;
   onClose?: () => void;
-  keepOpen?: boolean; // New prop to control if modal should stay open
+  keepOpen?: boolean;
 }
 
+const SNAP_POINTS = [0.3, 0.6, 0.9]; // 30%, 60%, 90% of screen height
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-// Snap positions for the bottom sheet
-const SNAP_POINTS = {
-  HALF: SCREEN_HEIGHT * 0.5,
-  FULL: SCREEN_HEIGHT * 0.8,
-  CLOSED: SCREEN_HEIGHT,
-};
-
-const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
-  children,
-  isVisible = false,
-  onClose,
-  keepOpen = false
-}) => {
+export default function SimpleBottomSheet({ 
+  children, 
+  isVisible = false, 
+  onClose, 
+  keepOpen = false 
+}: SimpleBottomSheetProps) {
+  const [currentSnapPoint, setCurrentSnapPoint] = useState(0);
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-  const gestureTranslateY = useRef(new Animated.Value(0)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
-  const [currentSnapPoint, setCurrentSnapPoint] = useState(SNAP_POINTS.HALF);
-  const lastGestureY = useRef(0);
-  const startPositionY = useRef(0);
+  const gestureTranslateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (isVisible) {
-      setCurrentSnapPoint(SNAP_POINTS.HALF);
-      gestureTranslateY.setValue(0);
+      // Show bottom sheet with Wii-style animation
       Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: SCREEN_HEIGHT - SNAP_POINTS.HALF,
-          duration: 300,
+        Animated.spring(translateY, {
+          toValue: SCREEN_HEIGHT * (1 - SNAP_POINTS[1]), // Default to 60%
           useNativeDriver: true,
+          tension: 100,
+          friction: 8,
         }),
         Animated.timing(backdropOpacity, {
           toValue: 0.5,
@@ -58,101 +50,83 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
           useNativeDriver: true,
         }),
       ]).start();
+      setCurrentSnapPoint(1);
     } else {
-      setCurrentSnapPoint(SNAP_POINTS.CLOSED);
-      gestureTranslateY.setValue(0);
+      // Hide bottom sheet
       Animated.parallel([
-        Animated.timing(translateY, {
+        Animated.spring(translateY, {
           toValue: SCREEN_HEIGHT,
-          duration: 250,
           useNativeDriver: true,
+          tension: 100,
+          friction: 8,
         }),
         Animated.timing(backdropOpacity, {
           toValue: 0,
-          duration: 250,
+          duration: 200,
           useNativeDriver: true,
         }),
       ]).start();
     }
-  }, [isVisible, translateY, backdropOpacity, gestureTranslateY]);
+  }, [isVisible, translateY, backdropOpacity]);
 
   const handleBackdropPress = () => {
-    // Only allow closing if keepOpen is false
-    if (!keepOpen) {
-      onClose?.();
+    if (!keepOpen && onClose) {
+      onClose();
     }
   };
 
   const snapToPoint = (point: number) => {
-    setCurrentSnapPoint(point);
-    gestureTranslateY.setValue(0);
-    Animated.timing(translateY, {
-      toValue: SCREEN_HEIGHT - point,
-      duration: 300,
+    const targetY = SCREEN_HEIGHT * (1 - SNAP_POINTS[point]);
+    Animated.spring(translateY, {
+      toValue: targetY,
       useNativeDriver: true,
+      tension: 100,
+      friction: 8,
     }).start();
+    setCurrentSnapPoint(point);
   };
 
-  // Determines the closest snap point based on velocity and position
   const getClosestSnapPoint = (currentY: number, velocityY: number) => {
-    const currentPosition = SCREEN_HEIGHT - currentY;
-
-    if (velocityY > 1000) return keepOpen ? SNAP_POINTS.HALF : SNAP_POINTS.CLOSED;
-    if (velocityY < -1000) return SNAP_POINTS.FULL;
-
-    const distances = [
-      { point: SNAP_POINTS.HALF, distance: Math.abs(currentPosition - SNAP_POINTS.HALF) },
-      { point: SNAP_POINTS.FULL, distance: Math.abs(currentPosition - SNAP_POINTS.FULL) },
-    ];
-
-    if (currentPosition < SNAP_POINTS.HALF * 0.5 && !keepOpen) {
-      return SNAP_POINTS.CLOSED;
+    const currentProgress = 1 - currentY / SCREEN_HEIGHT;
+    
+    if (velocityY > 500) return 0; // Fast downward swipe
+    if (velocityY < -500) return SNAP_POINTS.length - 1; // Fast upward swipe
+    
+    // Find closest snap point
+    let closest = 0;
+    let minDistance = Math.abs(SNAP_POINTS[0] - currentProgress);
+    
+    for (let i = 1; i < SNAP_POINTS.length; i++) {
+      const distance = Math.abs(SNAP_POINTS[i] - currentProgress);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closest = i;
+      }
     }
-
-    distances.sort((a, b) => a.distance - b.distance);
-    return distances[0].point;
+    
+    return closest;
   };
 
-  // Handles pan gesture events with boundary clamping
-  const onGestureEvent = (event: any) => {
-    const { translationY } = event.nativeEvent;
-    lastGestureY.current = translationY;
+  const onGestureEvent = Animated.event(
+    [{ nativeEvent: { translationY: gestureTranslateY } }],
+    { useNativeDriver: true }
+  );
 
-    const currentBasePosition = SCREEN_HEIGHT - currentSnapPoint;
-    const intendedPosition = currentBasePosition + translationY;
-
-    const minPosition = SCREEN_HEIGHT - SNAP_POINTS.FULL;
-    const maxPosition = keepOpen ? SCREEN_HEIGHT - SNAP_POINTS.HALF + 50 : SCREEN_HEIGHT;
-
-    const clampedPosition = Math.max(minPosition, Math.min(maxPosition, intendedPosition));
-    const clampedTranslation = clampedPosition - currentBasePosition;
-
-    gestureTranslateY.setValue(clampedTranslation);
-  };
-
-  // Handles gesture state changes (begin/end) for snapping behavior
   const onHandlerStateChange = (event: any) => {
-    const { state, translationY, velocityY } = event.nativeEvent;
-
-    if (state === State.BEGAN) {
-      startPositionY.current = SCREEN_HEIGHT - currentSnapPoint;
-    } else if (state === State.END) {
-      const currentBasePosition = SCREEN_HEIGHT - currentSnapPoint;
-      const intendedPosition = currentBasePosition + translationY;
-
-      const minPosition = SCREEN_HEIGHT - SNAP_POINTS.FULL;
-      const maxPosition = keepOpen ? SCREEN_HEIGHT - SNAP_POINTS.HALF + 50 : SCREEN_HEIGHT;
-
-      const finalY = Math.max(minPosition, Math.min(maxPosition, intendedPosition));
-      const targetSnapPoint = getClosestSnapPoint(finalY, velocityY);
-
-      gestureTranslateY.setValue(0);
-
-      if (targetSnapPoint === SNAP_POINTS.CLOSED && !keepOpen) {
-        onClose?.();
+    if (event.nativeEvent.state === State.END) {
+      const { translationY, velocityY } = event.nativeEvent;
+      const currentY = SCREEN_HEIGHT * (1 - SNAP_POINTS[currentSnapPoint]) + translationY;
+      
+      const targetSnapPoint = getClosestSnapPoint(currentY, velocityY);
+      
+      if (targetSnapPoint === 0 && !keepOpen && onClose) {
+        onClose();
       } else {
         snapToPoint(targetSnapPoint);
       }
+      
+      // Reset gesture translation
+      gestureTranslateY.setValue(0);
     }
   };
 
@@ -160,112 +134,106 @@ const SimpleBottomSheet: React.FC<SimpleBottomSheetProps> = ({
     <Modal
       visible={isVisible}
       transparent
-      animationType="none"
       statusBarTranslucent
+      animationType="none"
     >
-      <View style={styles.container}>
-        <TouchableWithoutFeedback onPress={handleBackdropPress}>
-          <Animated.View
-            style={[
-              styles.backdrop,
-              { opacity: backdropOpacity }
-            ]}
-          />
-        </TouchableWithoutFeedback>
+      {/* Backdrop */}
+      <TouchableWithoutFeedback onPress={handleBackdropPress}>
+        <Animated.View 
+          style={[
+            styles.backdrop, 
+            { opacity: backdropOpacity }
+          ]} 
+        />
+      </TouchableWithoutFeedback>
 
-        <PanGestureHandler
-          onGestureEvent={onGestureEvent}
-          onHandlerStateChange={onHandlerStateChange}
+      {/* Bottom Sheet */}
+      <PanGestureHandler
+        onGestureEvent={onGestureEvent}
+        onHandlerStateChange={onHandlerStateChange}
+      >
+        <Animated.View
+          style={[
+            styles.bottomSheet,
+            {
+              transform: [
+                { 
+                  translateY: Animated.add(translateY, gestureTranslateY)
+                }
+              ],
+            },
+          ]}
         >
-          <Animated.View
-            style={[
-              styles.bottomSheet,
-              {
-                transform: [
-                  { translateY: Animated.add(translateY, gestureTranslateY) }
-                ],
-              },
-            ]}
-          >
-            <View style={styles.handle} />
-
-            <View style={styles.contentContainer}>
-              {children || (
-                <View style={styles.defaultContent}>
-                  <Text style={styles.title}>Bottom Sheet 🎉</Text>
-                  <Text style={styles.description}>
-                    This is a custom bottom sheet implementation.
-                    Try dragging it up and down!
-                  </Text>
-                  <Button
-                    title="Close"
-                    onPress={onClose}
-                  />
-                </View>
-              )}
+          {/* Wii-style Handle */}
+          <View style={styles.wiiHandle} />
+          
+          {/* Wii-style Header */}
+          <View style={styles.wiiHeader}>
+            <View style={styles.wiiIndicators}>
+              <View style={[styles.wiiIndicator, { backgroundColor: colors.wiiBlue }]} />
+              <View style={[styles.wiiIndicator, { backgroundColor: colors.wiiGreen }]} />
+              <View style={[styles.wiiIndicator, { backgroundColor: colors.wiiYellow }]} />
             </View>
-          </Animated.View>
-        </PanGestureHandler>
-      </View>
+          </View>
+
+          {/* Content */}
+          <View style={styles.content}>
+            {children}
+          </View>
+        </Animated.View>
+      </PanGestureHandler>
     </Modal>
   );
-};
-
-SimpleBottomSheet.displayName = 'SimpleBottomSheet';
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'black',
+    flex: 1,
+    backgroundColor: colors.wiiTextDark,
   },
   bottomSheet: {
-    height: SNAP_POINTS.FULL,
-    backgroundColor: colors.background || '#ffffff',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.wiiWhite,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
+    minHeight: SCREEN_HEIGHT * 0.3,
+    maxHeight: SCREEN_HEIGHT * 0.9,
+    borderWidth: 1,
+    borderColor: colors.wiiDarkGray,
+    boxShadow: '0px -4px 12px rgba(0, 0, 0, 0.15)',
+    elevation: 8,
   },
-  handle: {
+  wiiHandle: {
     width: 40,
     height: 4,
-    backgroundColor: colors.grey || '#cccccc',
+    backgroundColor: colors.wiiDarkGray,
     borderRadius: 2,
     alignSelf: 'center',
     marginTop: 8,
     marginBottom: 8,
   },
-  contentContainer: {
-    flex: 1,
-    padding: 16,
-  },
-  defaultContent: {
-    flex: 1,
+  wiiHeader: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.wiiGray,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 16,
+  wiiIndicators: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  description: {
-    fontSize: 16,
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: 20,
+  wiiIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 3,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
   },
 });
-
-export default SimpleBottomSheet;

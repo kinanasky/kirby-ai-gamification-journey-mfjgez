@@ -1,39 +1,71 @@
 
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView, Animated, Image, PanResponder } from 'react-native';
 import { commonStyles, colors, buttonStyles } from '../styles/commonStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { 
+  useFonts as useNunitoFonts, 
+  Nunito_400Regular, 
+  Nunito_600SemiBold, 
+  Nunito_700Bold 
+} from '@expo-google-fonts/nunito';
 import * as SplashScreen from 'expo-splash-screen';
 import { useRouter } from 'expo-router';
+import WiiCursor from '../components/WiiCursor';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function MainScreen() {
   const router = useRouter();
-  const [sakuraAnimation] = useState(new Animated.Value(0));
+  const [channelAnimation] = useState(new Animated.Value(0));
   const [sparkleAnimation] = useState(new Animated.Value(0));
-  const [petalAnimation] = useState(new Animated.Value(0));
+  const [floatAnimation] = useState(new Animated.Value(0));
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [showCursor, setShowCursor] = useState(false);
   
   let [fontsLoaded] = useFonts({
     PressStart2P_400Regular,
   });
 
+  let [nunitoFontsLoaded] = useNunitoFonts({
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
+
+  // Pan responder for cursor tracking
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (evt) => {
+      setCursorPosition({ x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY });
+      setShowCursor(true);
+    },
+    onPanResponderMove: (evt) => {
+      setCursorPosition({ x: evt.nativeEvent.pageX, y: evt.nativeEvent.pageY });
+    },
+    onPanResponderRelease: () => {
+      setShowCursor(false);
+    },
+  });
+
   useEffect(() => {
-    if (fontsLoaded) {
+    if (fontsLoaded && nunitoFontsLoaded) {
       SplashScreen.hideAsync();
-      // Start Sakura bounce animation
+      
+      // Start channel hover animation
       Animated.loop(
         Animated.sequence([
-          Animated.timing(sakuraAnimation, {
-            toValue: -8,
-            duration: 1500,
+          Animated.timing(channelAnimation, {
+            toValue: 1,
+            duration: 2000,
             useNativeDriver: true,
           }),
-          Animated.timing(sakuraAnimation, {
+          Animated.timing(channelAnimation, {
             toValue: 0,
-            duration: 1500,
+            duration: 2000,
             useNativeDriver: true,
           }),
         ])
@@ -43,21 +75,28 @@ export default function MainScreen() {
       Animated.loop(
         Animated.timing(sparkleAnimation, {
           toValue: 1,
-          duration: 2000,
+          duration: 1500,
           useNativeDriver: true,
         })
       ).start();
 
-      // Start petal falling animation
+      // Start floating animation
       Animated.loop(
-        Animated.timing(petalAnimation, {
-          toValue: 1,
-          duration: 3000,
-          useNativeDriver: true,
-        })
+        Animated.sequence([
+          Animated.timing(floatAnimation, {
+            toValue: -5,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(floatAnimation, {
+            toValue: 5,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
       ).start();
     }
-  }, [fontsLoaded, petalAnimation, sakuraAnimation, sparkleAnimation]);
+  }, [fontsLoaded, nunitoFontsLoaded, channelAnimation, sparkleAnimation, floatAnimation]);
 
   const handleStartAdventure = () => {
     console.log('Starting adventure!');
@@ -69,220 +108,330 @@ export default function MainScreen() {
     router.push('/explanation');
   };
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !nunitoFontsLoaded) {
     return null;
   }
 
   return (
     <SafeAreaView style={commonStyles.container}>
-      <ScrollView contentContainerStyle={commonStyles.content}>
-        {/* Floating petals */}
-        <Animated.View 
-          style={[
-            {
-              position: 'absolute',
-              top: 50,
-              left: 50,
-              width: 20,
-              height: 20,
-              backgroundColor: colors.rose,
-              borderRadius: 10,
-              transform: [
-                {
-                  translateY: petalAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 200]
-                  })
-                }
-              ]
-            }
-          ]}
-        />
-        <Animated.View 
-          style={[
-            {
-              position: 'absolute',
-              top: 80,
-              right: 80,
-              width: 15,
-              height: 15,
-              backgroundColor: colors.primary,
-              borderRadius: 8,
-              transform: [
-                {
-                  translateY: petalAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 250]
-                  })
-                }
-              ]
-            }
-          ]}
-        />
-
-        {/* Sparkles */}
-        <Animated.View 
-          style={[
-            {
-              position: 'absolute',
-              top: 120,
-              left: 30,
-              width: 12,
-              height: 12,
-              backgroundColor: colors.accent,
-              borderRadius: 6,
-              opacity: sparkleAnimation,
-            }
-          ]}
-        />
-        <Animated.View 
-          style={[
-            {
-              position: 'absolute',
-              top: 150,
-              right: 50,
-              width: 10,
-              height: 10,
-              backgroundColor: colors.purple,
-              borderRadius: 5,
-              opacity: sparkleAnimation,
-            }
-          ]}
-        />
-
-        {/* Title - Changed to Ana's DreamLand */}
-        <Text style={[commonStyles.title, { fontSize: 16, marginBottom: 10 }]}>
-          🌸 Ana's DreamLand 🌸
-        </Text>
-        <Text style={[commonStyles.pixelText, { fontSize: 8, marginBottom: 30, color: colors.text }]}>
-          A Jornada da IA e Gamificação Brasil–Coreia
-        </Text>
-
-        {/* Ana Carla Boas Vindas Image (replacing Sakura Character) */}
-        <Animated.View 
-          style={[
-            {
-              marginBottom: 20,
-              transform: [{ translateY: sakuraAnimation }]
-            }
-          ]}
-        >
-          <Image 
-            source={require('../assets/images/1eb82ef6-1309-4eb9-ae29-33ce88661c60.png')}
-            style={{ width: 120, height: 120, borderRadius: 60 }}
-            resizeMode="cover"
+      <View {...panResponder.panHandlers} style={{ flex: 1, width: '100%' }}>
+        <WiiCursor x={cursorPosition.x} y={cursorPosition.y} visible={showCursor} />
+        
+        <ScrollView contentContainerStyle={commonStyles.content}>
+          {/* Wii-style floating elements */}
+          <Animated.View 
+            style={[
+              {
+                position: 'absolute',
+                top: 60,
+                left: 40,
+                width: 12,
+                height: 12,
+                backgroundColor: colors.wiiBlue,
+                borderRadius: 6,
+                opacity: sparkleAnimation,
+              }
+            ]}
           />
-          
-          {/* Cute sparkles around the image */}
-          <View style={{
-            width: 8,
-            height: 8,
-            backgroundColor: colors.accent,
-            borderRadius: 4,
-            position: 'absolute',
-            left: 15,
-            top: 20,
-          }} />
-          <View style={{
-            width: 6,
-            height: 6,
-            backgroundColor: colors.coral,
-            borderRadius: 3,
-            position: 'absolute',
-            right: 20,
-            top: 25,
-          }} />
-          <View style={{
-            width: 10,
-            height: 10,
-            backgroundColor: colors.accent,
-            borderRadius: 5,
-            position: 'absolute',
-            left: 20,
-            bottom: 15,
-          }} />
-          <View style={{
-            width: 7,
-            height: 7,
-            backgroundColor: colors.purple,
-            borderRadius: 4,
-            position: 'absolute',
-            right: 15,
-            bottom: 20,
-          }} />
-        </Animated.View>
+          <Animated.View 
+            style={[
+              {
+                position: 'absolute',
+                top: 100,
+                right: 60,
+                width: 10,
+                height: 10,
+                backgroundColor: colors.wiiYellow,
+                borderRadius: 5,
+                opacity: sparkleAnimation,
+              }
+            ]}
+          />
+          <Animated.View 
+            style={[
+              {
+                position: 'absolute',
+                top: 140,
+                left: 80,
+                width: 8,
+                height: 8,
+                backgroundColor: colors.wiiGreen,
+                borderRadius: 4,
+                opacity: sparkleAnimation,
+              }
+            ]}
+          />
 
-        {/* Dialog Box - Fixed text alignment */}
-        <View style={[commonStyles.dialogBox, { alignItems: 'center', justifyContent: 'center' }]}>
-          <Text style={[commonStyles.pixelText, { marginBottom: 12, fontSize: 9, textAlign: 'center' }]}>
-            🌸 Olá, aventureiro(a)! Bem-vindo ao mundo da pesquisa sobre Inteligência Artificial e Gamificação na Educação.
-          </Text>
-          <Text style={[commonStyles.pixelText, { fontSize: 9, textAlign: 'center' }]}>
-            Vamos desbloquear juntos o próximo nível? ✨
-          </Text>
-        </View>
-
-        {/* Menu Buttons */}
-        <View style={{ width: '100%', alignItems: 'center', marginTop: 30 }}>
-          {/* Start Adventure Button */}
-          <TouchableOpacity
-            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }]}
-            onPress={handleStartAdventure}
+          {/* Wii-style Title */}
+          <Animated.View 
+            style={[
+              { alignItems: 'center', marginBottom: 30 },
+              { transform: [{ translateY: floatAnimation }] }
+            ]}
           >
-            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10, textAlign: 'center' }]}>
-              🌸 Iniciar Aventura 🌸
+            <Text style={[commonStyles.wiiTitle, { fontSize: 22, marginBottom: 5 }]}>
+              Ana's DreamLand
             </Text>
-          </TouchableOpacity>
+            <Text style={[commonStyles.wiiSubtitle, { fontSize: 12, color: colors.wiiTextLight }]}>
+              A Jornada da IA e Gamificação Brasil–Coreia
+            </Text>
+          </Animated.View>
 
-          {/* Guide Button (Separated) */}
-          <TouchableOpacity
-            style={[buttonStyles.pixelButton, { marginBottom: 15, width: '70%', backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }]}
-            onPress={handleGuide}
+          {/* Ana Carla Character - Wii Style */}
+          <Animated.View 
+            style={[
+              {
+                marginBottom: 25,
+                alignItems: 'center',
+                transform: [{ translateY: floatAnimation }]
+              }
+            ]}
           >
-            <Text style={[commonStyles.pixelText, { color: colors.darkText, fontSize: 10, textAlign: 'center' }]}>
-              📚 Guia de IA e Gamificação 📚
+            <View style={[commonStyles.sakuraCharacter, { width: 120, height: 120 }]}>
+              <Image 
+                source={require('../assets/images/1eb82ef6-1309-4eb9-ae29-33ce88661c60.png')}
+                style={{ width: 110, height: 110, borderRadius: 55 }}
+                resizeMode="cover"
+              />
+            </View>
+            
+            {/* Wii-style sparkles around character */}
+            <Animated.View style={[
+              {
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                width: 6,
+                height: 6,
+                backgroundColor: colors.wiiYellow,
+                borderRadius: 3,
+                opacity: sparkleAnimation,
+              }
+            ]} />
+            <Animated.View style={[
+              {
+                position: 'absolute',
+                top: 15,
+                right: 15,
+                width: 8,
+                height: 8,
+                backgroundColor: colors.wiiBlue,
+                borderRadius: 4,
+                opacity: sparkleAnimation,
+              }
+            ]} />
+            <Animated.View style={[
+              {
+                position: 'absolute',
+                bottom: 10,
+                left: 20,
+                width: 5,
+                height: 5,
+                backgroundColor: colors.wiiGreen,
+                borderRadius: 2.5,
+                opacity: sparkleAnimation,
+              }
+            ]} />
+            <Animated.View style={[
+              {
+                position: 'absolute',
+                bottom: 15,
+                right: 10,
+                width: 7,
+                height: 7,
+                backgroundColor: colors.wiiOrange,
+                borderRadius: 3.5,
+                opacity: sparkleAnimation,
+              }
+            ]} />
+          </Animated.View>
+
+          {/* Wii-style Dialog Box */}
+          <View style={[commonStyles.dialogBox, { marginBottom: 30 }]}>
+            <Text style={[commonStyles.wiiText, { marginBottom: 8, fontSize: 13 }]}>
+              🎮 Olá, aventureiro(a)! Bem-vindo ao mundo da pesquisa sobre Inteligência Artificial e Gamificação na Educação.
             </Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={[commonStyles.wiiText, { fontSize: 13, color: colors.wiiTextLight }]}>
+              Vamos desbloquear juntos o próximo nível? ✨
+            </Text>
+          </View>
 
-        {/* Cute decorative elements */}
-        <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-around', width: '100%' }}>
-          <Text style={{ fontSize: 20 }}>🌸</Text>
-          <Text style={{ fontSize: 15 }}>✨</Text>
-          <Text style={{ fontSize: 18 }}>🌺</Text>
-          <Text style={{ fontSize: 15 }}>✨</Text>
-          <Text style={{ fontSize: 20 }}>🌸</Text>
-        </View>
+          {/* Wii Channel Style Menu */}
+          <View style={commonStyles.wiiChannelGrid}>
+            {/* Start Adventure Channel */}
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    {
+                      scale: channelAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.05]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[buttonStyles.wiiChannelButton, { backgroundColor: colors.wiiBlue }]}
+                onPress={handleStartAdventure}
+              >
+                <Text style={{ fontSize: 30, marginBottom: 5 }}>🚀</Text>
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontSize: 11, fontWeight: '600' }]}>
+                  Iniciar
+                </Text>
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontSize: 11, fontWeight: '600' }]}>
+                  Aventura
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
 
-        {/* Cute graphic elements using provided images */}
-        <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'space-around', width: '100%' }}>
-          <Image 
-            source={require('../assets/images/b0462bac-ce40-4426-85e7-7441474a9766.jpeg')}
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/745c21d8-d092-4f93-99c1-c2cc531fb239.jpeg')}
-            style={{ width: 25, height: 25, borderRadius: 12 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/0c5e2954-df29-4cc6-955a-81207bc59f0a.jpeg')}
-            style={{ width: 28, height: 28, borderRadius: 14 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/2595260a-77d5-4793-835a-1e1dce880580.jpeg')}
-            style={{ width: 26, height: 26, borderRadius: 13 }}
-            resizeMode="cover"
-          />
-          <Image 
-            source={require('../assets/images/5e8a3f35-ca6c-4275-9669-7ed177ebb68d.jpeg')}
-            style={{ width: 24, height: 24, borderRadius: 12 }}
-            resizeMode="cover"
-          />
-        </View>
-      </ScrollView>
+            {/* Guide Channel */}
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    {
+                      scale: channelAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.05]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[buttonStyles.wiiChannelButton, { backgroundColor: colors.wiiGreen }]}
+                onPress={handleGuide}
+              >
+                <Text style={{ fontSize: 30, marginBottom: 5 }}>📚</Text>
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontSize: 11, fontWeight: '600' }]}>
+                  Guia IA &
+                </Text>
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontSize: 11, fontWeight: '600' }]}>
+                  Gamificação
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            {/* Settings Channel (placeholder) */}
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    {
+                      scale: channelAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.05]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[buttonStyles.wiiChannelButton, { backgroundColor: colors.wiiOrange }]}
+                onPress={() => console.log('Settings channel')}
+              >
+                <Text style={{ fontSize: 30, marginBottom: 5 }}>⚙️</Text>
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontSize: 11, fontWeight: '600' }]}>
+                  Configurações
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            {/* Credits Channel (placeholder) */}
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    {
+                      scale: channelAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.05]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            >
+              <TouchableOpacity
+                style={[buttonStyles.wiiChannelButton, { backgroundColor: colors.wiiPurple }]}
+                onPress={() => router.push('/final')}
+              >
+                <Text style={{ fontSize: 30, marginBottom: 5 }}>🏆</Text>
+                <Text style={[commonStyles.wiiText, { color: colors.wiiWhite, fontSize: 11, fontWeight: '600' }]}>
+                  Créditos
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+
+          {/* Wii-style decorative bottom bar */}
+          <View style={{ 
+            flexDirection: 'row', 
+            marginTop: 30, 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            backgroundColor: colors.wiiWhite,
+            borderRadius: 20,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderWidth: 1,
+            borderColor: colors.wiiDarkGray,
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            elevation: 2,
+          }}>
+            <View style={{ 
+              width: 8, 
+              height: 8, 
+              backgroundColor: colors.wiiBlue, 
+              borderRadius: 4, 
+              marginHorizontal: 5 
+            }} />
+            <View style={{ 
+              width: 8, 
+              height: 8, 
+              backgroundColor: colors.wiiGreen, 
+              borderRadius: 4, 
+              marginHorizontal: 5 
+            }} />
+            <View style={{ 
+              width: 8, 
+              height: 8, 
+              backgroundColor: colors.wiiYellow, 
+              borderRadius: 4, 
+              marginHorizontal: 5 
+            }} />
+            <View style={{ 
+              width: 8, 
+              height: 8, 
+              backgroundColor: colors.wiiOrange, 
+              borderRadius: 4, 
+              marginHorizontal: 5 
+            }} />
+            <View style={{ 
+              width: 8, 
+              height: 8, 
+              backgroundColor: colors.wiiRed, 
+              borderRadius: 4, 
+              marginHorizontal: 5 
+            }} />
+          </View>
+
+          {/* Wii-style footer text */}
+          <Text style={[commonStyles.wiiText, { 
+            marginTop: 20, 
+            fontSize: 10, 
+            color: colors.wiiTextLight,
+            fontStyle: 'italic' 
+          }]}>
+            Powered by Nintendo Wii Style Interface
+          </Text>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
